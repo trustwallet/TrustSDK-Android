@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="vertical"
+    tools:context=".MainActivity"
+    tools:ignore="HardcodedText">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/label_tx_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Data:"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            app:layout_constraintBottom_toBottomOf="@+id/text_tx_data"
+            app:layout_constraintEnd_toEndOf="@+id/label_tx_amount"
+            app:layout_constraintTop_toTopOf="@+id/text_tx_data" />
+
+        <TextView
+            android:id="@+id/label_tx_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Amount:"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            app:layout_constraintBottom_toBottomOf="@+id/text_tx_amount"
+            app:layout_constraintEnd_toEndOf="@+id/label_tx_address"
+            app:layout_constraintTop_toTopOf="@+id/text_tx_amount" />
+
+        <EditText
+            android:id="@+id/text_tx_address"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:ems="10"
+            android:hint="Address"
+            android:inputType="text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/label_tx_address"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/text_tx_amount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:hint="Amount"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="@+id/text_tx_address"
+            app:layout_constraintStart_toStartOf="@+id/text_tx_address"
+            app:layout_constraintTop_toBottomOf="@+id/text_tx_address" />
+
+        <EditText
+            android:id="@+id/text_tx_data"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:hint="Data"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="@+id/text_tx_amount"
+            app:layout_constraintStart_toStartOf="@+id/text_tx_amount"
+            app:layout_constraintTop_toBottomOf="@+id/text_tx_amount" />
+
+        <TextView
+            android:id="@+id/label_tx_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="Address:"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            app:layout_constraintBottom_toBottomOf="@+id/text_tx_address"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/text_tx_address" />
+
+        <Button
+            android:id="@+id/btn_sign_transaction"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Sign Transaction"
+            app:layout_constraintEnd_toEndOf="@+id/text_tx_address"
+            app:layout_constraintStart_toStartOf="@+id/label_tx_address"
+            app:layout_constraintTop_toBottomOf="@+id/text_tx_data" />
+
+        <EditText
+            android:id="@+id/text_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:ems="10"
+            android:hint="Message"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="@+id/text_tx_data"
+            app:layout_constraintStart_toStartOf="@+id/text_tx_data"
+            app:layout_constraintTop_toBottomOf="@+id/btn_sign_transaction" />
+
+        <TextView
+            android:id="@+id/label_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Message:"
+            app:layout_constraintBottom_toBottomOf="@+id/text_message"
+            app:layout_constraintEnd_toEndOf="@+id/label_tx_data"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/text_message" />
+
+        <Button
+            android:id="@+id/btn_sign_message"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="Sign Message"
+            app:layout_constraintEnd_toEndOf="@+id/btn_sign_transaction"
+            app:layout_constraintStart_toStartOf="@+id/btn_sign_transaction"
+            app:layout_constraintTop_toBottomOf="@+id/text_message" />
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

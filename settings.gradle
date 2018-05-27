@@ -1,1 +1,1 @@
-include ':sample'
+include ':sampleClient', ':trustsdk', ':sampleWallet'
