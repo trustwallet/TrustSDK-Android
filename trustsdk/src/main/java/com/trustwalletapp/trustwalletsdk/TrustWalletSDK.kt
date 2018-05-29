@@ -15,7 +15,7 @@ import com.trustwalletapp.trustcore.Transaction
  * A Wallet SDK to be used by a Wallet application. This class handles incoming signing requests by delegating
  * them to a {@link WalletDelegate} and then returns the result to the calling app (again via {@link WalletDelegate}.
  */
-class TrustWalletSDK(val delegate: WalletDelegate) {
+class TrustWalletSDK(private val delegate: WalletDelegate) {
 
     /**
      * Handle a request to sign
@@ -34,8 +34,8 @@ class TrustWalletSDK(val delegate: WalletDelegate) {
 
     // region Message
     private fun handleSignMessage(intent: Intent): Boolean {
-        val data = intent.getSerializableExtra(EXTRA_MESSAGE_DATA) as Data
-        val address = intent.getSerializableExtra(EXTRA_MESSAGE_ADDRESS) as Address?
+        val data = intent.getParcelableExtra(EXTRA_MESSAGE_DATA) as Data
+        val address = intent.getParcelableExtra(EXTRA_MESSAGE_ADDRESS) as Address?
 
         delegate.signMessage(data, address) {
             onMessageSigned(it)
@@ -63,7 +63,7 @@ class TrustWalletSDK(val delegate: WalletDelegate) {
             return false
         }
 
-        val transaction: Transaction = intent.getSerializableExtra(EXTRA_TRANSACTION) as Transaction
+        val transaction: Transaction = intent.getParcelableExtra(EXTRA_TRANSACTION) as Transaction
 
         delegate.signTransaction(transaction) {
             onTransactionSigned(it)

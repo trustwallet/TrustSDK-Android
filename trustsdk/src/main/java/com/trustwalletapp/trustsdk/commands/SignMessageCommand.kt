@@ -42,7 +42,7 @@ internal class SignMessageCommand(
     }
 
     override fun handleCallback(resultData: Intent): Boolean {
-        val data = resultData.getSerializableExtra(EXTRA_MESSAGE_DATA) as Data?
+        val data = resultData.getParcelableExtra(EXTRA_MESSAGE_DATA) as Data?
 
         return if (data != null) {
             completion(data)

@@ -25,7 +25,7 @@ internal class SignTransactionCommand(
     }
 
     override fun handleCallback(resultData: Intent): Boolean {
-        val data = resultData.getSerializableExtra(EXTRA_TRANSACTION_DATA) as Data?
+        val data = resultData.getParcelableExtra(EXTRA_TRANSACTION_DATA) as Data?
 
         return if (data != null) {
             completion(data)

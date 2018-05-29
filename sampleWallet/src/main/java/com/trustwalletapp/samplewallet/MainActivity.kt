@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity(), WalletDelegate {
                     completion(Data(result))
                     closeWorkDialog()
                 },
-                1500
+                3000
         )
     }
 
@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity(), WalletDelegate {
                     completion(Data(result))
                     closeWorkDialog()
                 },
-                1500
+                3000
         )
     }
 

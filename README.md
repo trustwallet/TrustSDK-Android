@@ -21,15 +21,20 @@ Then, in your submodule's `build.gradle` add a dependency to this repo:
 
 ### Sign a transaction
 
-    val intent = trustSDK.signTransaction(transaction) { signedTransaction ->
-        // Use the returned signedTransaction
+    val transaction = Transaction(address, amount, BigInteger.valueOf(21), BigInteger.valueOf(21000))
+    val intent = trustSDK.signTransaction(transaction) {signedData ->
+        // Use the returned signedData
     }
+
+    startActivityForResult(intent, REQUEST_SIGN)
     
 ### Sign a message
 
-    val intent = trustSDK.signMessage(message) { signedMessage ->
-        // Use the returned signedMessage
+    val intent = trustSDK.signMessage(Data("message"), null) {signedData ->
+        // Use the returned signedData
     }
+
+    startActivityForResult(intent, REQUEST_SIGN)
     
 ### Handle Trust callbacks
 Both `signMessage` and `signTransaction` construct an intent that has to be used to start an app that can sign.
