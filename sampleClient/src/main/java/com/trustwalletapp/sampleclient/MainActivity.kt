@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_SIGN) {
             if (resultCode == Activity.RESULT_OK) {
-                data?.let { Trust.handleCallback(it) }
+                data?.let { Trust.onActivityResult(it) }
             }
         }
         super.onActivityResult(requestCode, resultCode, data)

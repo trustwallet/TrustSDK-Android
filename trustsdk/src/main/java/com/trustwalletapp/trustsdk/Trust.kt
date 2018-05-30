@@ -15,10 +15,10 @@ object Trust {
     var walletApp: WalletApp = WalletApp("Trust", "trust", Uri.parse("https://play.google.com/store/apps/details?id=com.wallet.crypto.trustapp"))
 
     /**
-     * Handles a response callback
-     * @return `true` if the URL was handled; `false` otherwise.
+     * Handles the response callback
+     * @return `true` if the data was handled; `false` otherwise.
      */
-    fun handleCallback(resultData: Intent): Boolean {
+    fun onActivityResult(resultData: Intent): Boolean {
         val result = pendingCommand?.handleCallback(resultData) ?: false
         pendingCommand = null
         return result
