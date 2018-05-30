@@ -1,5 +1,6 @@
 package com.trustwalletapp.trustsdk.commands
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.trustwalletapp.Constants.ACTION_SIGN_TRANSACTION
@@ -45,7 +46,7 @@ internal class SignTransactionCommand(
  *
  * @return an intent to be used by the calling activity.
  */
-fun TrustSDK.signTransaction(transaction: Transaction, completion: (Data) -> Unit): Intent? {
+fun TrustSDK.signTransaction(transaction: Transaction, context: Context, completion: (Data) -> Unit): Intent? {
     val command = SignTransactionCommand(transaction, completion)
-    return execute(command)
+    return execute(command, context)
 }

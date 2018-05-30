@@ -19,14 +19,10 @@ private const val REQUEST_SIGN = 1
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var trustSDK: TrustSDK
-
     @SuppressLint("SetTextI18n") // not translatable strings
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        trustSDK = TrustSDK(this)
 
         text_tx_address.setText("0xe47494379c1d48ee73454c251a6395fdd4f9eb43")
         text_tx_data.setText("0x8f834227000000000000000000000000000000005224")
@@ -38,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun signMessage() {
         val message = text_message.text.toString()
-        val intent = trustSDK.signMessage(Data(message), null) {signedMessage ->
+        val intent = TrustSDK.signMessage(Data(message), null, this) {signedMessage ->
             alert("Message", signedMessage.data)
         }
 
@@ -53,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         val amount = BigInteger(amountText)
 
         val transaction = Transaction(address, amount, BigInteger.valueOf(21), BigInteger.valueOf(21000))
-        val intent = trustSDK.signTransaction(transaction) {signedData ->
+        val intent = TrustSDK.signTransaction(transaction, this) {signedData ->
             alert("Transaction", signedData.data)
         }
 
@@ -63,7 +59,7 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_SIGN) {
             if (resultCode == Activity.RESULT_OK) {
-                data?.let { trustSDK.handleCallback(it) }
+                data?.let { TrustSDK.handleCallback(it) }
             }
         }
         super.onActivityResult(requestCode, resultCode, data)

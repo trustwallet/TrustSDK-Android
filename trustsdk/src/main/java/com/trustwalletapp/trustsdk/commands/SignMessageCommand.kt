@@ -6,6 +6,7 @@
 
 package com.trustwalletapp.trustsdk.commands
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.trustwalletapp.Constants
@@ -62,7 +63,7 @@ internal class SignMessageCommand(
  *
  * @return an intent to be used by the calling activity.
  */
-fun TrustSDK.signMessage(message: Data, address: Address?, completion: (Data) -> Unit): Intent? {
+fun TrustSDK.signMessage(message: Data, address: Address?, context: Context, completion: (Data) -> Unit): Intent? {
     val command = SignMessageCommand(message, address, completion)
-    return execute(command)
+    return execute(command, context)
 }

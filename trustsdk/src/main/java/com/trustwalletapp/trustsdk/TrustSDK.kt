@@ -7,39 +7,43 @@ package com.trustwalletapp.trustsdk
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import com.trustwalletapp.Constants
 
-class TrustSDK(context: Context) {
-    private val walletApp: WalletApp?
+object TrustSDK {
     private var pendingCommand: Command? = null
-
-    init {
-        walletApp = WalletAppManager(context)
-                .availableApps.first()
-    }
+    var walletApp: WalletApp = WalletApp("Trust", "trust", Uri.parse("https://play.google.com/store/apps/details?id=com.wallet.crypto.trustapp"))
 
     /**
-     * Handles an open URL callback
+     * Handles a response callback
      * @return `true` if the URL was handled; `false` otherwise.
      */
     fun handleCallback(resultData: Intent): Boolean {
-//        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false), components.scheme == callbackScheme else {
-//        return false
-//    }
         val result = pendingCommand?.handleCallback(resultData) ?: false
         pendingCommand = null
         return result
     }
 
-    internal fun execute(command: Command): Intent? {
-        return walletApp?.let {
+    internal fun execute(command: Command, context: Context): Intent? {
+
+        return if (canStartWallet(context)) {
             pendingCommand = command
-            command.requestIntent(it.scheme)
-        } ?: fallbackToInstall()
+            command.requestIntent(walletApp.scheme)
+        } else {
+            fallbackToInstall()
+        }
     }
 
-    private fun fallbackToInstall(): Intent? {
-        return walletApp?.let {
-            return Intent(Intent.ACTION_VIEW, it.installUri)
-        }
+    private fun canStartWallet(context: Context): Boolean {
+        val packageManager = context.packageManager
+        val uri = Uri.fromParts(walletApp.scheme, "", "")
+        val intentMessage = Intent(Constants.ACTION_SIGN_MESSAGE, uri)
+        val intentTransaction = Intent(Constants.ACTION_SIGN_TRANSACTION, uri)
+
+        return packageManager.queryIntentActivities(intentMessage, 0).isNotEmpty() && packageManager.queryIntentActivities(intentTransaction, 0).isNotEmpty()
+    }
+
+    private fun fallbackToInstall(): Intent {
+        return Intent(Intent.ACTION_VIEW, walletApp.installUri)
     }
 }
