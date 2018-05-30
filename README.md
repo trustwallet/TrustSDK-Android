@@ -22,7 +22,7 @@ Then, in your submodule's `build.gradle` add a dependency to this repo:
 ### Sign a transaction
 
     val transaction = Transaction(address, amount, BigInteger.valueOf(21), BigInteger.valueOf(21000))
-    val intent = trustSDK.signTransaction(transaction) {signedData ->
+    val intent = Trust.signTransaction(transaction) {signedData ->
         // Use the returned signedData
     }
 
@@ -30,7 +30,7 @@ Then, in your submodule's `build.gradle` add a dependency to this repo:
     
 ### Sign a message
 
-    val intent = trustSDK.signMessage(Data("message"), null) {signedData ->
+    val intent = Trust.signMessage(Data("message"), null) {signedData ->
         // Use the returned signedData
     }
 
@@ -45,7 +45,7 @@ In return, the wallet app promises to finish with a result that is delivered in 
 Let `TrustSDK` handle the result:
 
     onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        trustSDK.handleCallback(data)
+        Trust.onActivityResult(data)
     }
     
 ## Wallet SDK
