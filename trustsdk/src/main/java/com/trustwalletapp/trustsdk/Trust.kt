@@ -44,6 +44,10 @@ object Trust {
     }
 
     private fun fallbackToInstall(): Intent {
-        return Intent(Intent.ACTION_VIEW, walletApp.installUri)
+        var uri = walletApp.installUri
+        if (uri.scheme.isNullOrEmpty()) {
+            uri = uri.buildUpon().scheme("http").build()
+        }
+        return Intent(Intent.ACTION_VIEW, uri)
     }
 }
