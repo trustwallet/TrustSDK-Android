@@ -1,11 +1,10 @@
 package com.trustwalletapp.sampleclient
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import com.trustwalletapp.trustcore.Address
 import com.trustwalletapp.trustcore.Transaction
 import com.trustwalletapp.trustsdk.Trust
@@ -14,9 +13,7 @@ import com.trustwalletapp.trustsdk.commands.signTransaction
 import kotlinx.android.synthetic.main.activity_main.*
 import java.math.BigInteger
 
-private const val REQUEST_SIGN = 1
-
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), Trust.SigningResponseHandler {
 
     @SuppressLint("SetTextI18n") // not translatable strings
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,11 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun signMessage() {
         val message = text_message.text.toString()
-        val intent = Trust.signMessage(message, null, this) { signedMessage ->
-            alert("Message", signedMessage)
-        }
-
-        startActivityForResult(intent, REQUEST_SIGN)
+        Trust.signMessage(message, null, this)
     }
 
     private fun signTransaction() {
@@ -48,20 +41,14 @@ class MainActivity : AppCompatActivity() {
         val amount = BigInteger(amountText)
 
         val transaction = Transaction(address, amount, BigInteger.valueOf(21), BigInteger.valueOf(21000))
-        val intent = Trust.signTransaction(transaction, this) {signedData ->
-            alert("Transaction", signedData)
-        }
-
-        startActivityForResult(intent, REQUEST_SIGN)
+        Trust.signTransaction(transaction, this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_SIGN) {
-            if (resultCode == Activity.RESULT_OK) {
-                data?.let { Trust.onActivityResult(it) }
-            }
+        val handled = Trust.onActivityResult(requestCode, resultCode, data, this)
+        if (!handled) {
+            super.onActivityResult(requestCode, resultCode, data)
         }
-        super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun alert(title: String, message: String) {
@@ -72,5 +59,15 @@ class MainActivity : AppCompatActivity() {
                 .create()
                 .show()
 
+    }
+
+    override fun onMessageSigned(message: String?) {
+        val alertMessage = message ?: "Failed to sign the message"
+        alert("Message", alertMessage)
+    }
+
+    override fun onTransactionSigned(transactionData: String?) {
+        val alertMessage = transactionData ?: "Failed to sign the transaction"
+        alert("Transaction", alertMessage)
     }
 }

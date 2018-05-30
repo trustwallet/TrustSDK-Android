@@ -10,5 +10,5 @@ import android.content.Intent
 internal interface Command {
     val name: String
     fun requestIntent(scheme: String): Intent
-    fun handleCallback(resultData: Intent): Boolean
+    fun requestCode(): Int
 }

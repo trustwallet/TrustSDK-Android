@@ -80,8 +80,8 @@ class MainActivity : AppCompatActivity(), WalletDelegate {
     }
 
     private fun closeWorkDialog() {
-        val fragment = supportFragmentManager.findFragmentByTag(TAG_DIALOG_WORK) as DialogFragment
-        fragment.dismiss()
+        val fragment = supportFragmentManager.findFragmentByTag(TAG_DIALOG_WORK) as DialogFragment?
+        fragment?.dismiss()
     }
 
 }
