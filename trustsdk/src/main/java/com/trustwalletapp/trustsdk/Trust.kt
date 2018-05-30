@@ -10,7 +10,7 @@ import android.content.Intent
 import android.net.Uri
 import com.trustwalletapp.Constants
 
-object TrustSDK {
+object Trust {
     private var pendingCommand: Command? = null
     var walletApp: WalletApp = WalletApp("Trust", "trust", Uri.parse("https://play.google.com/store/apps/details?id=com.wallet.crypto.trustapp"))
 

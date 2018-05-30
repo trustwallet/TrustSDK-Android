@@ -1,3 +1,9 @@
+// Copyright © 2018 Trust.
+//
+// This file is part of TrustSDK. The full TrustSDK copyright notice, including
+// terms governing use, modification, and redistribution, is contained in the
+// file LICENSE at the root of the source code distribution tree.
+
 package com.trustwalletapp.trustsdk.commands
 
 import android.content.Context
@@ -9,7 +15,7 @@ import com.trustwalletapp.Constants.EXTRA_TRANSACTION_DATA
 import com.trustwalletapp.trustcore.Data
 import com.trustwalletapp.trustcore.Transaction
 import com.trustwalletapp.trustsdk.Command
-import com.trustwalletapp.trustsdk.TrustSDK
+import com.trustwalletapp.trustsdk.Trust
 
 internal class SignTransactionCommand(
         private val transaction: Transaction,
@@ -46,7 +52,7 @@ internal class SignTransactionCommand(
  *
  * @return an intent to be used by the calling activity.
  */
-fun TrustSDK.signTransaction(transaction: Transaction, context: Context, completion: (Data) -> Unit): Intent? {
+fun Trust.signTransaction(transaction: Transaction, context: Context, completion: (Data) -> Unit): Intent? {
     val command = SignTransactionCommand(transaction, completion)
     return execute(command, context)
 }

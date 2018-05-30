@@ -9,7 +9,6 @@ package com.trustwalletapp.trustsdk.commands
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import com.trustwalletapp.Constants
 import com.trustwalletapp.Constants.ACTION_SIGN_MESSAGE
 import com.trustwalletapp.Constants.EXTRA_MESSAGE_ADDRESS
 import com.trustwalletapp.Constants.EXTRA_MESSAGE_DATA
@@ -17,7 +16,7 @@ import com.trustwalletapp.Constants.EXTRA_MESSAGE_NAME
 import com.trustwalletapp.trustcore.Address
 import com.trustwalletapp.trustcore.Data
 import com.trustwalletapp.trustsdk.Command
-import com.trustwalletapp.trustsdk.TrustSDK
+import com.trustwalletapp.trustsdk.Trust
 
 internal class SignMessageCommand(
         private val message: Data,
@@ -63,7 +62,7 @@ internal class SignMessageCommand(
  *
  * @return an intent to be used by the calling activity.
  */
-fun TrustSDK.signMessage(message: Data, address: Address?, context: Context, completion: (Data) -> Unit): Intent? {
+fun Trust.signMessage(message: Data, address: Address?, context: Context, completion: (Data) -> Unit): Intent? {
     val command = SignMessageCommand(message, address, completion)
     return execute(command, context)
 }

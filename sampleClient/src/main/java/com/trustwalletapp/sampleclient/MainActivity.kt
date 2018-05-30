@@ -9,7 +9,7 @@ import android.support.v7.app.AlertDialog
 import com.trustwalletapp.trustcore.Address
 import com.trustwalletapp.trustcore.Data
 import com.trustwalletapp.trustcore.Transaction
-import com.trustwalletapp.trustsdk.TrustSDK
+import com.trustwalletapp.trustsdk.Trust
 import com.trustwalletapp.trustsdk.commands.signMessage
 import com.trustwalletapp.trustsdk.commands.signTransaction
 import kotlinx.android.synthetic.main.activity_main.*
@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun signMessage() {
         val message = text_message.text.toString()
-        val intent = TrustSDK.signMessage(Data(message), null, this) {signedMessage ->
+        val intent = Trust.signMessage(Data(message), null, this) { signedMessage ->
             alert("Message", signedMessage.data)
         }
 
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         val amount = BigInteger(amountText)
 
         val transaction = Transaction(address, amount, BigInteger.valueOf(21), BigInteger.valueOf(21000))
-        val intent = TrustSDK.signTransaction(transaction, this) {signedData ->
+        val intent = Trust.signTransaction(transaction, this) {signedData ->
             alert("Transaction", signedData.data)
         }
 
@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_SIGN) {
             if (resultCode == Activity.RESULT_OK) {
-                data?.let { TrustSDK.handleCallback(it) }
+                data?.let { Trust.handleCallback(it) }
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
