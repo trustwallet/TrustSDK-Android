@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.DialogFragment
 import com.trustwalletapp.trustcore.Address
-import com.trustwalletapp.trustcore.Data
 import com.trustwalletapp.trustcore.Transaction
 import com.trustwalletapp.trustwalletsdk.TrustWalletSDK
 import com.trustwalletapp.trustwalletsdk.WalletDelegate
@@ -25,25 +24,25 @@ class MainActivity : AppCompatActivity(), WalletDelegate {
         trustWalletSDK.handleRequest(intent)
     }
 
-    override fun signMessage(message: Data, address: Address?, completion: (Data?) -> Unit) {
-        showWorkDialog("Signing message", message.data)
+    override fun signMessage(message: String, address: Address?, completion: (String?) -> Unit) {
+        showWorkDialog("Signing message", message)
 
         // Real Wallet app should provide a proper signing here
         
         Handler(mainLooper).postDelayed(
                 {
-                    val result = message.data
+                    val result = message
                             .toByteArray()
                             .contentToString()
 
-                    completion(Data(result))
+                    completion(result)
                     closeWorkDialog()
                 },
                 3000
         )
     }
 
-    override fun signTransaction(transaction: Transaction, completion: (Data?) -> Unit) {
+    override fun signTransaction(transaction: Transaction, completion: (String?) -> Unit) {
         showWorkDialog("Signing transaction", transaction.toString())
 
         // Real Wallet app should provide a proper signing here
@@ -54,7 +53,7 @@ class MainActivity : AppCompatActivity(), WalletDelegate {
                             .toByteArray()
                             .contentToString()
 
-                    completion(Data(result))
+                    completion(result)
                     closeWorkDialog()
                 },
                 3000

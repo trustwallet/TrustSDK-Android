@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import com.trustwalletapp.trustcore.Address
-import com.trustwalletapp.trustcore.Data
 import com.trustwalletapp.trustcore.Transaction
 import com.trustwalletapp.trustsdk.Trust
 import com.trustwalletapp.trustsdk.commands.signMessage
@@ -34,8 +33,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun signMessage() {
         val message = text_message.text.toString()
-        val intent = Trust.signMessage(Data(message), null, this) { signedMessage ->
-            alert("Message", signedMessage.data)
+        val intent = Trust.signMessage(message, null, this) { signedMessage ->
+            alert("Message", signedMessage)
         }
 
         startActivityForResult(intent, REQUEST_SIGN)
@@ -45,12 +44,12 @@ class MainActivity : AppCompatActivity() {
         val addressText = text_tx_address.text.toString()
         val amountText = text_tx_amount.text.toString()
 
-        val address = Address(Data(addressText))
+        val address = Address(addressText)
         val amount = BigInteger(amountText)
 
         val transaction = Transaction(address, amount, BigInteger.valueOf(21), BigInteger.valueOf(21000))
         val intent = Trust.signTransaction(transaction, this) {signedData ->
-            alert("Transaction", signedData.data)
+            alert("Transaction", signedData)
         }
 
         startActivityForResult(intent, REQUEST_SIGN)

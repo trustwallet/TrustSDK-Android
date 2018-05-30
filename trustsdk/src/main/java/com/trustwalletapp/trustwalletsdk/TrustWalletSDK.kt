@@ -8,7 +8,6 @@ import com.trustwalletapp.Constants.EXTRA_MESSAGE_DATA
 import com.trustwalletapp.Constants.EXTRA_TRANSACTION
 import com.trustwalletapp.Constants.EXTRA_TRANSACTION_DATA
 import com.trustwalletapp.trustcore.Address
-import com.trustwalletapp.trustcore.Data
 import com.trustwalletapp.trustcore.Transaction
 
 /**
@@ -34,7 +33,7 @@ class TrustWalletSDK(private val delegate: WalletDelegate) {
 
     // region Message
     private fun handleSignMessage(intent: Intent): Boolean {
-        val data = intent.getParcelableExtra(EXTRA_MESSAGE_DATA) as Data
+        val data = intent.getStringExtra(EXTRA_MESSAGE_DATA)
         val address = intent.getParcelableExtra(EXTRA_MESSAGE_ADDRESS) as Address?
 
         delegate.signMessage(data, address) {
@@ -44,7 +43,7 @@ class TrustWalletSDK(private val delegate: WalletDelegate) {
         return true
     }
 
-    private fun onMessageSigned(signedData: Data?) {
+    private fun onMessageSigned(signedData: String?) {
         if (signedData == null) {
             delegate.onSignFailure()
             return
@@ -72,7 +71,7 @@ class TrustWalletSDK(private val delegate: WalletDelegate) {
         return true
     }
 
-    private fun onTransactionSigned(signedData: Data?) {
+    private fun onTransactionSigned(signedData: String?) {
         if (signedData == null) {
             delegate.onSignFailure()
             return

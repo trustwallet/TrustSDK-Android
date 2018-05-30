@@ -8,13 +8,13 @@ package com.trustwalletapp.trustcore
 import android.os.Parcel
 import android.os.Parcelable
 
-data class Address(val data: Data) : Parcelable {
+data class Address(val data: String) : Parcelable {
 
 
-    private constructor(parcel: Parcel) : this(parcel.readParcelable(Data::class.java.classLoader) as Data)
+    private constructor(parcel: Parcel) : this(parcel.readString())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeParcelable(data, flags)
+        parcel.writeString(data)
     }
 
     override fun describeContents(): Int {

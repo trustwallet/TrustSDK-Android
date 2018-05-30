@@ -12,14 +12,13 @@ import android.net.Uri
 import com.trustwalletapp.Constants.ACTION_SIGN_TRANSACTION
 import com.trustwalletapp.Constants.EXTRA_TRANSACTION
 import com.trustwalletapp.Constants.EXTRA_TRANSACTION_DATA
-import com.trustwalletapp.trustcore.Data
 import com.trustwalletapp.trustcore.Transaction
 import com.trustwalletapp.trustsdk.Command
 import com.trustwalletapp.trustsdk.Trust
 
 internal class SignTransactionCommand(
         private val transaction: Transaction,
-        private val completion: (Data) -> Unit
+        private val completion: (String) -> Unit
 ) : Command {
     override val name: String
         get() = "sign-transaction"
@@ -32,7 +31,7 @@ internal class SignTransactionCommand(
     }
 
     override fun handleCallback(resultData: Intent): Boolean {
-        val data = resultData.getParcelableExtra(EXTRA_TRANSACTION_DATA) as Data?
+        val data = resultData.getStringExtra(EXTRA_TRANSACTION_DATA)
 
         return if (data != null) {
             completion(data)
@@ -52,7 +51,7 @@ internal class SignTransactionCommand(
  *
  * @return an intent to be used by the calling activity.
  */
-fun Trust.signTransaction(transaction: Transaction, context: Context, completion: (Data) -> Unit): Intent? {
+fun Trust.signTransaction(transaction: Transaction, context: Context, completion: (String) -> Unit): Intent? {
     val command = SignTransactionCommand(transaction, completion)
     return execute(command, context)
 }

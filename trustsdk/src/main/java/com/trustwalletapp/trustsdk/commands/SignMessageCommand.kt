@@ -14,14 +14,13 @@ import com.trustwalletapp.Constants.EXTRA_MESSAGE_ADDRESS
 import com.trustwalletapp.Constants.EXTRA_MESSAGE_DATA
 import com.trustwalletapp.Constants.EXTRA_MESSAGE_NAME
 import com.trustwalletapp.trustcore.Address
-import com.trustwalletapp.trustcore.Data
 import com.trustwalletapp.trustsdk.Command
 import com.trustwalletapp.trustsdk.Trust
 
 internal class SignMessageCommand(
-        private val message: Data,
+        private val message: String,
         private val address: Address?,
-        private val completion: (Data) -> Unit
+        private val completion: (String) -> Unit
 
 ) : Command {
 
@@ -42,7 +41,7 @@ internal class SignMessageCommand(
     }
 
     override fun handleCallback(resultData: Intent): Boolean {
-        val data = resultData.getParcelableExtra(EXTRA_MESSAGE_DATA) as Data?
+        val data = resultData.getStringExtra(EXTRA_MESSAGE_DATA)
 
         return if (data != null) {
             completion(data)
@@ -62,7 +61,7 @@ internal class SignMessageCommand(
  *
  * @return an intent to be used by the calling activity.
  */
-fun Trust.signMessage(message: Data, address: Address?, context: Context, completion: (Data) -> Unit): Intent? {
+fun Trust.signMessage(message: String, address: Address?, context: Context, completion: (String) -> Unit): Intent? {
     val command = SignMessageCommand(message, address, completion)
     return execute(command, context)
 }

@@ -2,7 +2,6 @@ package com.trustwalletapp.trustwalletsdk
 
 import android.content.Intent
 import com.trustwalletapp.trustcore.Address
-import com.trustwalletapp.trustcore.Data
 import com.trustwalletapp.trustcore.Transaction
 
 /**
@@ -18,7 +17,7 @@ interface WalletDelegate {
      * @param address address to use for signing
      * @param completion completing closure to call with the signed message (or `null` on failure)
      */
-    fun signMessage(message: Data, address: Address?, completion: (Data?) -> Unit)
+    fun signMessage(message: String, address: Address?, completion: (String?) -> Unit)
 
     /**
      * Signs a transaction.
@@ -26,7 +25,7 @@ interface WalletDelegate {
      * @param transaction transaction to sign
      * @param completion completing closure to call with the signed message (or `null` on failure)
      */
-    fun signTransaction(transaction: Transaction, completion: (Data?) -> Unit)
+    fun signTransaction(transaction: Transaction, completion: (String?) -> Unit)
 
     /**
      * Called when the sign process has finished and it's now safe to return to the caller app.

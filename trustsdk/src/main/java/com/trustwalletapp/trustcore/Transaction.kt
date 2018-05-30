@@ -19,7 +19,7 @@ data class Transaction(
         var gasLimit: BigInteger
 ) : Parcelable {
     var nonce: Int = 0
-    var payload: Data? = null
+    var payload: String? = null
 
 
     private constructor(parcel: Parcel) : this(
@@ -29,7 +29,7 @@ data class Transaction(
             BigInteger(parcel.readString())
     ) {
         nonce = parcel.readInt()
-        payload = parcel.readParcelable(Data::class.java.classLoader)
+        payload = parcel.readString()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -39,7 +39,7 @@ data class Transaction(
         parcel.writeString(gasLimit.toString())
 
         parcel.writeInt(nonce)
-        parcel.writeParcelable(payload, flags)
+        parcel.writeString(payload)
     }
 
     override fun describeContents(): Int {
