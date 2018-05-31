@@ -1,10 +1,12 @@
 package com.trustwalletapp.sampleclient
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import com.trustwalletapp.Constants
 import com.trustwalletapp.trustcore.Address
 import com.trustwalletapp.trustcore.Transaction
 import com.trustwalletapp.trustsdk.Trust
@@ -47,7 +49,12 @@ class MainActivity : AppCompatActivity(), Trust.SigningResponseHandler {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val handled = Trust.onActivityResult(requestCode, resultCode, data, this)
         if (!handled) {
-            super.onActivityResult(requestCode, resultCode, data)
+            if ((requestCode == Trust.REQUEST_SIGN_TRANSACTION || requestCode == Trust.REQUEST_SIGN_MESSAGE)
+                && data?.hasExtra(Constants.EXTRA_ERROR_MESSAGE) == true) {
+                alert("Signing failed!", data.getStringExtra(Constants.EXTRA_ERROR_MESSAGE))
+            } else {
+                super.onActivityResult(requestCode, resultCode, data)
+            }
         }
     }
 

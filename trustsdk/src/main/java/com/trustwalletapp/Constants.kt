@@ -10,4 +10,6 @@ object Constants {
 
     internal const val EXTRA_TRANSACTION = "transaction"
     internal const val EXTRA_TRANSACTION_DATA = "transactionData"
+
+    const val EXTRA_ERROR_MESSAGE = "errorMessage"
 }
