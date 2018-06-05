@@ -28,7 +28,7 @@ android {
 }
 
 dependencies {
-    api 'com.github.TrustWallet:trust-core-and:0.01.4'
+    api 'com.github.TrustWallet:trust-core-and:0.01.5'
 
     implementation 'com.android.support:appcompat-v7:27.1.1'
     testImplementation 'junit:junit:4.12'

@@ -36,6 +36,7 @@ public abstract class Trust {
                 .path("message")
                 .appendQueryParameter(ExtraKey.VALUE, message.value)
                 .appendQueryParameter(ExtraKey.IS_PERSONAL, String.valueOf(message.isPersonal))
+                .appendQueryParameter(ExtraKey.LEAF_POSITION, String.valueOf(message.leafPosition))
                 .build();
     }
 
