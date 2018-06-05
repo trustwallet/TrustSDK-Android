@@ -55,6 +55,7 @@ public abstract class Trust {
                 .appendQueryParameter(ExtraKey.GAS_LIMIT, String.valueOf(transaction.gasLimit))
                 .appendQueryParameter(ExtraKey.NONCE, String.valueOf(transaction.nonce))
                 .appendQueryParameter(ExtraKey.INPUT, transaction.payload)
+                .appendQueryParameter(ExtraKey.LEAF_POSITION, String.valueOf(transaction.leafPosition))
                 .build();
     }
 
@@ -134,6 +135,7 @@ public abstract class Trust {
         String INPUT = "input";
         String NONCE = "nonce";
         String IS_PERSONAL = "is_personal";
+        String LEAF_POSITION = "leaf_position";
     }
 
     public interface ErrorCode {
