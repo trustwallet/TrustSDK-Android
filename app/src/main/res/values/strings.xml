@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TrustSdk</string>
+    <string name="sign_message">Sign message</string>
+    <string name="sign_transaction">Sign transaction</string>
+</resources>
