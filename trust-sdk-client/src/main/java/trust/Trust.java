@@ -143,6 +143,9 @@ public abstract class Trust {
         int NONE = -1;
         int CANCELED = 0;
         int SIGN_NOT_AVAILABLE = 1;
+        int SIGN_ERROR = 2;
+        int WATCH_ONLY = 3;
+
         int UNKNOWN_ERROR = Integer.MAX_VALUE;
     }
 }

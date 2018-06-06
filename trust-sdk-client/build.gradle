@@ -25,10 +25,18 @@ android {
         }
     }
 
+    task androidSourcesJar(type: Jar) {
+        from android.sourceSets.main.java.source
+        classifier = 'sources'
+    }
+
+    artifacts {
+        archives androidSourcesJar
+    }
 }
 
 dependencies {
-    api 'com.github.TrustWallet:trust-core-and:0.01.5'
+    api 'com.github.TrustWallet:TrustCoreAndroid:0.01.5'
 
     implementation 'com.android.support:appcompat-v7:27.1.1'
     testImplementation 'junit:junit:4.12'
