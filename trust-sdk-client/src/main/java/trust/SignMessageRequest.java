@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
 
 import trust.core.entity.Message;
 
@@ -95,8 +94,7 @@ public final class SignMessageRequest implements Request, Parcelable {
             return new SignMessageRequest(message);
         }
 
-        @Nullable
-        public Call call(Activity activity) {
+        public Call<SignMessageRequest> call(Activity activity) {
             return Trust.execute(activity, get());
         }
     }

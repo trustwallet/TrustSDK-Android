@@ -42,7 +42,10 @@ public class SignRequestHelper implements Parcelable {
     }
 
     public void onSignCancel(Activity activity) {
-        fail(activity, Trust.ErrorCode.CANCELED);
+        Intent intent = new Intent(request.getAction());
+        intent.setData(request.key());
+        activity.setResult(Activity.RESULT_CANCELED, intent);
+        activity.finish();
     }
 
     public void onSignError(Activity activity, int error) {
@@ -52,6 +55,7 @@ public class SignRequestHelper implements Parcelable {
     private void fail(Activity activity, int error) {
         Intent intent = new Intent(request.getAction());
         intent.setData(request.key());
+        intent.putExtra(Trust.ExtraKey.ERROR, error);
         activity.setResult(Trust.RESULT_ERROR, intent);
         activity.finish();
     }
@@ -67,6 +71,7 @@ public class SignRequestHelper implements Parcelable {
     private void success(Activity activity, String signHex) {
         Intent intent = new Intent(request.getAction());
         intent.setData(request.key());
+        intent.putExtra(Trust.ExtraKey.SIGN, signHex);
         activity.setResult(Activity.RESULT_OK, intent);
         activity.finish();
     }
