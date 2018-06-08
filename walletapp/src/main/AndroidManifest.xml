@@ -16,9 +16,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <intent-filter>
-                <data android:scheme="eth" />
-                <action android:name="eth.sign.transaction" />
-                <action android:name="eth.sign.message" />
+                <data android:scheme="trust" />
+                <action android:name="trust.sign-transaction" />
+                <action android:name="trust.sign-message" />
+                <action android:name="trust.sign-personal-message" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

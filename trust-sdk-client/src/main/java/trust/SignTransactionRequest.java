@@ -19,12 +19,31 @@ public class SignTransactionRequest implements Request, Parcelable {
 
     private SignTransactionRequest(Transaction transaction) {
         this.transaction = transaction;
-        this.uri = Trust.toUri(transaction);
+        this.uri = toUri(transaction);
     }
 
     private SignTransactionRequest(Parcel in) {
         transaction = in.readParcelable(Transaction.class.getClassLoader());
         uri = in.readParcelable(Uri.class.getClassLoader());
+    }
+
+    private static Uri toUri(Transaction transaction) {
+        return new Uri.Builder()
+                .scheme("trust")
+                .path("sign-transaction")
+                .appendQueryParameter(Trust.ExtraKey.RECIPIENT,
+                        transaction.recipient == null ? "" : transaction.recipient.toString())
+                .appendQueryParameter(Trust.ExtraKey.CONTRACT,
+                        transaction.contract == null ? "" : transaction.contract.toString())
+                .appendQueryParameter(Trust.ExtraKey.VALUE,
+                        transaction.value == null ? "0" : transaction.value.toString())
+                .appendQueryParameter(Trust.ExtraKey.GAS_PRICE,
+                        transaction.gasPrice == null ? "0" : transaction.gasPrice.toString())
+                .appendQueryParameter(Trust.ExtraKey.GAS_LIMIT, String.valueOf(transaction.gasLimit))
+                .appendQueryParameter(Trust.ExtraKey.NONCE, String.valueOf(transaction.nonce))
+                .appendQueryParameter(Trust.ExtraKey.PAYLOAD, transaction.payload)
+                .appendQueryParameter(Trust.ExtraKey.LEAF_POSITION, String.valueOf(transaction.leafPosition))
+                .build();
     }
 
     @Override
@@ -164,7 +183,7 @@ public class SignTransactionRequest implements Request, Parcelable {
             try {
                 leafPosition(Long.valueOf(leafPosition));
             } catch (NumberFormatException ex) { /* Quietly */ }
-            payload(payload);
+            payload(uri.getQueryParameter(Trust.ExtraKey.PAYLOAD));
             contractAddress(TextUtils.isEmpty(contract) ? null : new Address(contract));
             try {
                 nonce(Long.valueOf(nonce));

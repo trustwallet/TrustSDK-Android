@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Base64;
 
 import trust.core.entity.Message;
 
@@ -14,12 +15,22 @@ public final class SignMessageRequest implements Request, Parcelable {
 
     private SignMessageRequest(Message message) {
         this.message = message;
-        uri = Trust.toUri(message);
+        uri = toUri(message);
     }
 
     private SignMessageRequest(Parcel in) {
         message = in.readParcelable(Message.class.getClassLoader());
         uri = in.readParcelable(Uri.class.getClassLoader());
+    }
+
+    private static Uri toUri(Message message) {
+        byte[] value = Base64.encode(message.value.getBytes(), Base64.DEFAULT);
+        return new Uri.Builder()
+                .scheme("trust")
+                .path(message.isPersonal ? "sign-personal-message" : "sign-message")
+                .appendQueryParameter(Trust.ExtraKey.MESSAGE, new String(value))
+                .appendQueryParameter(Trust.ExtraKey.LEAF_POSITION, String.valueOf(message.leafPosition))
+                .build();
     }
 
     @Override
@@ -34,7 +45,7 @@ public final class SignMessageRequest implements Request, Parcelable {
 
     @Override
     public String getAction() {
-        return Trust.ACTION_SIGN_MESSAGE;
+        return message.isPersonal ? Trust.ACTION_SIGN_PERSONAL_MESSAGE : Trust.ACTION_SIGN_MESSAGE;
     }
 
     public static SignMessageRequest.Builder builder() {
@@ -85,8 +96,9 @@ public final class SignMessageRequest implements Request, Parcelable {
         }
 
         public Builder uri(Uri uri) {
-            message = uri.getQueryParameter(Trust.ExtraKey.VALUE);
-            isPersonal = "true".equals(uri.getQueryParameter(Trust.ExtraKey.IS_PERSONAL));
+            String value = uri.getQueryParameter(Trust.ExtraKey.MESSAGE);
+            message = new String(Base64.decode(value, Base64.DEFAULT));
+            isPersonal = "sign-personal-message".equals(uri.getLastPathSegment());
             try {
                 leafPosition = Long.valueOf(uri.getQueryParameter(Trust.ExtraKey.LEAF_POSITION));
             } catch (NumberFormatException ex) { /* Quietly */ }

@@ -75,7 +75,6 @@ To sign a message use this code:
 ```
 Trust.signMessage()
     .message("message to be signed")
-    .isPersonal(false)
     .call(this)
 ```
 
@@ -84,9 +83,8 @@ Trust.signMessage()
 To sign a personal message use this code:
 
 ```
-Trust.signMessage()
-    .message("private message to be signed")
-    .isPersonal(true)
+Trust.signPersonalMessage()
+    .message("message to be signed")
     .call(this)
 ```
 

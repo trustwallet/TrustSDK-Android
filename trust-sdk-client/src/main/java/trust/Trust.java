@@ -6,13 +6,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 
-import trust.core.entity.Message;
-import trust.core.entity.Transaction;
-
 public abstract class Trust {
 
-    public static final String ACTION_SIGN_TRANSACTION = "eth.sign.transaction";
-    public static final String ACTION_SIGN_MESSAGE = "eth.sign.message";
+    public static final String ACTION_SIGN_TRANSACTION = "trust.sign-transaction";
+    public static final String ACTION_SIGN_MESSAGE = "trust.sign-message";
+    public static final String ACTION_SIGN_PERSONAL_MESSAGE = "trust.sign-personal-message";
 
     public static final int RESULT_ERROR = 1;
 
@@ -24,37 +22,6 @@ public abstract class Trust {
 
     public static void setWalletAppPackageName(String packageName) {
         Trust.packageName = packageName;
-    }
-
-    public static Uri toUri(Message message) {
-        return new Uri.Builder()
-                .scheme("eth")
-                .path("sign")
-                .path("message")
-                .appendQueryParameter(ExtraKey.VALUE, message.value)
-                .appendQueryParameter(ExtraKey.IS_PERSONAL, String.valueOf(message.isPersonal))
-                .appendQueryParameter(ExtraKey.LEAF_POSITION, String.valueOf(message.leafPosition))
-                .build();
-    }
-
-    public static Uri toUri(Transaction transaction) {
-        return new Uri.Builder()
-                .scheme("eth")
-                .path("sign")
-                .path("transaction")
-                .appendQueryParameter(ExtraKey.RECIPIENT,
-                        transaction.recipient == null ? "" : transaction.recipient.toString())
-                .appendQueryParameter(ExtraKey.CONTRACT,
-                        transaction.contract == null ? "" : transaction.contract.toString())
-                .appendQueryParameter(ExtraKey.VALUE,
-                        transaction.value == null ? "0" : transaction.value.toString())
-                .appendQueryParameter(ExtraKey.GAS_PRICE,
-                        transaction.gasPrice == null ? "0" : transaction.gasPrice.toString())
-                .appendQueryParameter(ExtraKey.GAS_LIMIT, String.valueOf(transaction.gasLimit))
-                .appendQueryParameter(ExtraKey.NONCE, String.valueOf(transaction.nonce))
-                .appendQueryParameter(ExtraKey.INPUT, transaction.payload)
-                .appendQueryParameter(ExtraKey.LEAF_POSITION, String.valueOf(transaction.leafPosition))
-                .build();
     }
 
     public static SignTransactionRequest.Builder signTransaction() {
@@ -97,15 +64,15 @@ public abstract class Trust {
     interface ExtraKey {
         String SIGN = "sign";
         String ERROR = "error";
-        String RECIPIENT = "recipient";
-        String VALUE = "value";
-        String GAS_PRICE = "gas_price";
-        String GAS_LIMIT = "gas_limit";
+        String RECIPIENT = "to";
+        String VALUE = "amount";
+        String GAS_PRICE = "gasPrice";
+        String GAS_LIMIT = "gasLimit";
         String CONTRACT = "contract";
-        String INPUT = "input";
+        String PAYLOAD = "data";
         String NONCE = "nonce";
-        String IS_PERSONAL = "is_personal";
         String LEAF_POSITION = "leaf_position";
+        String MESSAGE = "message";
     }
 
     public interface ErrorCode {

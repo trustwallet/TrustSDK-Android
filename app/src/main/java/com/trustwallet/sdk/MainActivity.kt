@@ -15,6 +15,7 @@ import java.math.BigInteger
 
 class MainActivity : AppCompatActivity() {
     private var signMessageCall: Call<SignMessageRequest>? = null
+    private var signPersonalMessageCall: Call<SignMessageRequest>? = null
     private var signTransactionCall: Call<SignTransactionRequest>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,14 +40,14 @@ class MainActivity : AppCompatActivity() {
         }
       
         findViewById<Button>(R.id.sign_personal_message).setOnClickListener {
-            Trust.signMessage()
+            signPersonalMessageCall = Trust.signPersonalMessage()
                     .message("personal message to be signed")
                     .isPersonal(true)
                     .call(this)
         }
 
         if (savedInstanceState != null) {
-            signMessageCall = savedInstanceState.getParcelable("message_sign_call");
+            signMessageCall = savedInstanceState.getParcelable("message_sign_call")
             signTransactionCall = savedInstanceState.getParcelable("transaction_sign_call")
         }
     }
@@ -55,6 +56,11 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         signMessageCall?.let {
+            it.onActivityResult(requestCode, resultCode, data) {response ->
+                Log.d("SIGN_TAG", "Data: " + response.result)
+            }
+        }
+        signPersonalMessageCall?.let {
             it.onActivityResult(requestCode, resultCode, data) {response ->
                 Log.d("SIGN_TAG", "Data: " + response.result)
             }

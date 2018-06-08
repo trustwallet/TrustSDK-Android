@@ -21,6 +21,7 @@ public class SignRequestHelper implements Parcelable {
         }
 
         switch (action) {
+            case Trust.ACTION_SIGN_PERSONAL_MESSAGE:
             case Trust.ACTION_SIGN_MESSAGE: {
                 request = SignMessageRequest.builder().uri(uri).get();
                 Message message = request.body();

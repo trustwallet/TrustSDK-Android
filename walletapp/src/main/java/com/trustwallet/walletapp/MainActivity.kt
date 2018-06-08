@@ -36,7 +36,17 @@ class MainActivity : AppCompatActivity(), SignRequestHelper.Callback {
 
     override fun signPersonalMessage(message: Message?) {
         message?.let {
-            Log.d("WALLET_APP", "Message: " + it.value + ":" + it.isPersonal)
+            Log.d("WALLET_APP", "Personal message: " + message.value + ":" + message.isPersonal)
+            AlertDialog.Builder(this)
+                    .setMessage(message.value)
+                    .setNegativeButton("cancel") { dialog, wich ->
+                        signHelper.onSignCancel(this@MainActivity)
+                    }
+                    .setPositiveButton("ok") {dialog, which ->
+                        signHelper.onMessageSigned(this, "Hello personal!")
+                    }
+                    .show()
+
         }
     }
 
