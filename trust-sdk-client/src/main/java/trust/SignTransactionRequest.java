@@ -78,6 +78,7 @@ public class SignTransactionRequest implements Request, Parcelable {
         private String payload;
         private Address contract;
         private long nonce;
+        private long leafPosition;
 
         public Builder recipient(Address recipient) {
             this.recipient = recipient;
@@ -125,6 +126,11 @@ public class SignTransactionRequest implements Request, Parcelable {
             return this;
         }
 
+        public Builder leafPosition(long leafPosition) {
+            this.leafPosition = leafPosition;
+            return this;
+        }
+
         public Builder transaction(Transaction transaction) {
             recipient(transaction.recipient)
                     .contractAddress(transaction.contract)
@@ -132,7 +138,8 @@ public class SignTransactionRequest implements Request, Parcelable {
                     .gasLimit(transaction.gasLimit)
                     .gasPrice(transaction.gasPrice)
                     .payload(transaction.payload)
-                    .nonce(transaction.nonce);
+                    .nonce(transaction.nonce)
+                    .leafPosition(transaction.leafPosition);
             return this;
         }
 
@@ -143,6 +150,7 @@ public class SignTransactionRequest implements Request, Parcelable {
             String gasPrice = uri.getQueryParameter(Trust.ExtraKey.GAS_PRICE);
             String gasLimit = uri.getQueryParameter(Trust.ExtraKey.GAS_LIMIT);
             String nonce = uri.getQueryParameter(Trust.ExtraKey.NONCE);
+            String leafPosition = uri.getQueryParameter(Trust.ExtraKey.LEAF_POSITION);
             recipient(TextUtils.isEmpty(recipient) ? null : new Address(recipient));
             try {
                 value(TextUtils.isEmpty(value) ? BigInteger.ZERO : new BigInteger(value));
@@ -153,6 +161,9 @@ public class SignTransactionRequest implements Request, Parcelable {
             try {
                 gasLimit(Long.valueOf(gasLimit));
             } catch (Exception ex) { /* Quietly */ }
+            try {
+                leafPosition(Long.valueOf(leafPosition));
+            } catch (NumberFormatException ex) { /* Quietly */ }
             payload(payload);
             contractAddress(TextUtils.isEmpty(contract) ? null : new Address(contract));
             try {
@@ -162,7 +173,8 @@ public class SignTransactionRequest implements Request, Parcelable {
         }
 
         public SignTransactionRequest get() {
-            Transaction transaction = new Transaction(recipient, contract, value, gasPrice, gasLimit, nonce, payload);
+            Transaction transaction = new Transaction(
+                    recipient, contract, value, gasPrice, gasLimit, nonce, payload, leafPosition);
             return new SignTransactionRequest(transaction);
         }
 

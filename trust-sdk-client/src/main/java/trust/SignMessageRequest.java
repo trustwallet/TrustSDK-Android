@@ -67,6 +67,7 @@ public final class SignMessageRequest implements Request, Parcelable {
     public static class Builder {
         private String message;
         private boolean isPersonal;
+        private long leafPosition;
 
         public Builder message(String message) {
             this.message = message;
@@ -78,19 +79,27 @@ public final class SignMessageRequest implements Request, Parcelable {
             return this;
         }
 
+        public Builder leafPosition(long leafPosition) {
+            this.leafPosition = leafPosition;
+            return this;
+        }
+
         public Builder uri(Uri uri) {
             message = uri.getQueryParameter(Trust.ExtraKey.VALUE);
             isPersonal = "true".equals(uri.getQueryParameter(Trust.ExtraKey.IS_PERSONAL));
+            try {
+                leafPosition = Long.valueOf(uri.getQueryParameter(Trust.ExtraKey.LEAF_POSITION));
+            } catch (NumberFormatException ex) { /* Quietly */ }
             return this;
         }
 
         public Builder message(Message message) {
-            message(message.value).isPersonal(message.isPersonal);
+            message(message.value).isPersonal(message.isPersonal).leafPosition(message.leafPosition);
             return this;
         }
 
         public SignMessageRequest get() {
-            Message message = new Message(this.message, isPersonal);
+            Message message = new Message(this.message, isPersonal, leafPosition);
             return new SignMessageRequest(message);
         }
 
