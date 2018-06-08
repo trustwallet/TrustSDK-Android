@@ -5,9 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
 import trust.core.entity.Message;
 import trust.core.entity.Transaction;
@@ -72,13 +69,12 @@ public abstract class Trust {
         return SignMessageRequest.builder().isPersonal(true);
     }
 
-    @Nullable
-    public static Call execute(Activity activity, Request request) {
-        Intent intent = new Intent(request.getAction());
+    public static <T extends Request> Call<T> execute(final Activity activity, T request) {
+        final Intent intent = new Intent(request.getAction());
         intent.setData(request.key());
         if (canStartActivity(activity, intent)) {
             activity.startActivityForResult(intent, REQUEST_CODE_SIGN);
-            return new Call(request);
+            return new Call<>(request);
         } else {
             try {
                 activity.startActivity(new Intent(
@@ -96,33 +92,6 @@ public abstract class Trust {
     private static boolean canStartActivity(Context context, Intent intent) {
         PackageManager pm = context.getPackageManager();
         return pm.queryIntentActivities(intent, 0).size() > 0;
-    }
-
-    @NonNull
-    public static Response onActivityResult(int requestCode, int resultCode, Intent data) {
-        String signHex = null;
-        Request request = null;
-        int error = ErrorCode.NONE;
-
-        if (requestCode == REQUEST_CODE_SIGN) {
-            if (resultCode == Activity.RESULT_CANCELED) {
-                error = ErrorCode.CANCELED;
-            } else {
-                signHex = data.getStringExtra(ExtraKey.SIGN);
-                error = data.getIntExtra(ExtraKey.ERROR, ErrorCode.UNKNOWN_ERROR);
-                if (error == ErrorCode.NONE && TextUtils.isEmpty(signHex)) {
-                    error = ErrorCode.SIGN_NOT_AVAILABLE;
-                }
-
-                String action = data.getAction();
-                if (Trust.ACTION_SIGN_MESSAGE.equals(action)) {
-                    request = SignTransactionRequest.builder().uri(data.getData()).get();
-                } else if (Trust.ACTION_SIGN_TRANSACTION.equals(action)) {
-                    request = SignTransactionRequest.builder().uri(data.getData()).get();
-                }
-            }
-        }
-        return new Response(request, signHex, error);
     }
 
     interface ExtraKey {

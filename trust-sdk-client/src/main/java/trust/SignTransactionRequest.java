@@ -167,7 +167,7 @@ public class SignTransactionRequest implements Request, Parcelable {
         }
 
         @Nullable
-        public Call call(Activity activity) {
+        public Call<SignTransactionRequest> call(Activity activity) {
             return Trust.execute(activity, get());
         }
     }

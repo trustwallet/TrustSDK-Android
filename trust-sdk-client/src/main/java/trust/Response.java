@@ -1,41 +1,27 @@
 package trust;
 
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-public final class Response {
+public final class Response<T extends Request> {
 
     @Nullable
-    final Request request;
+    public final T request;
     @Nullable
-    final String signHex;
-    final int error;
+    public final String result;
+    public final int error;
 
-    public Response(@Nullable Request request, @Nullable String signHex, int error) {
+    public Response(@Nullable T request, @Nullable String result, int error) {
         this.request = request;
-        this.signHex = signHex;
+        this.result = result;
         this.error = error;
     }
 
-    public Response subscribe(@NonNull OnSuccessListener onSuccessListener) {
-        return subscribe(onSuccessListener, null);
-    }
-
-    public Response subscribe(@NonNull OnSuccessListener onSuccessListener, @Nullable OnFailureListener onFailureListener) {
-        if (isAvailable()) {
-            if (error > Trust.ErrorCode.NONE || TextUtils.isEmpty(signHex)) {
-                if (onFailureListener != null) {
-                    onFailureListener.onFail(request, error);
-                }
-            } else {
-                onSuccessListener.onSuccess(request, signHex);
-            }
-        }
-        return this;
+    public boolean isSuccess() {
+        return !TextUtils.isEmpty(result) && error == Trust.ErrorCode.NONE;
     }
 
     public boolean isAvailable() {
-        return request != null && (!TextUtils.isEmpty(signHex) || error > Trust.ErrorCode.NONE);
+        return request != null && (!TextUtils.isEmpty(result) || error > Trust.ErrorCode.NONE);
     }
 }

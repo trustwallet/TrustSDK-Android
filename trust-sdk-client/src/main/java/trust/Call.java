@@ -1,28 +1,42 @@
 package trust;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
-public class Call implements Parcelable {
-    private Request request;
+public class Call<T extends Request> implements Parcelable {
+    private final T request;
 
-    public Call(Request request) {
+    Call(T request) {
         this.request = request;
     }
 
-    protected Call(Parcel in) {
-        request = in.readParcelable(Request.class.getClassLoader());
+    private Call(Parcel in) {
+        Class<?> type = (Class) in.readSerializable();
+        request = in.readParcelable(type.getClassLoader());
     }
 
-    @NonNull
-    public Response onActivityResult(int requestCode, int resultCode, Intent data) {
-        Response response = Trust.onActivityResult(requestCode, resultCode, data);
-        if (response.isAvailable() && request.key().equals(response.request.key())) {
-            return response;
+    public void onActivityResult(int requestCode, int resultCode, Intent data, OnCompleteListener<T> onCompleteListener) {
+        if (requestCode != Trust.REQUEST_CODE_SIGN || !request.key().equals(data.getData())) {
+            return;
         }
-        return new Response(null, null, Trust.ErrorCode.NONE);
+        String signHex = null;
+        int error;
+        if (resultCode == Activity.RESULT_CANCELED) {
+            error = Trust.ErrorCode.CANCELED;
+        } else if (resultCode == Trust.RESULT_ERROR) {
+            error = data.getIntExtra(Trust.ExtraKey.ERROR, Trust.ErrorCode.UNKNOWN_ERROR);
+        } else {
+            signHex = data.getStringExtra(Trust.ExtraKey.SIGN);
+            error = data.getIntExtra(Trust.ExtraKey.ERROR, Trust.ErrorCode.NONE);
+            if (error == Trust.ErrorCode.NONE && TextUtils.isEmpty(signHex)) {
+                error = Trust.ErrorCode.SIGN_NOT_AVAILABLE;
+            }
+        }
+        Response<T> response = new Response<>(request, signHex, error);
+        onCompleteListener.onComplete(response);
     }
 
     @Override
@@ -32,6 +46,7 @@ public class Call implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeSerializable(request.getClass());
         dest.writeParcelable(request, flags);
     }
 
