@@ -60,7 +60,7 @@ To sign a transaction use this code:
 ```
 Trust.signTransaction()
     .recipient(Address("0x3637a62430C67Fe822f7136D2d9D74bDDd7A26C1"))
-    .gasPrice(BigInteger.valueOf(16))
+    .gasPrice(BigInteger.valueOf(16).multiply(BigInteger.TEN.pow(9)))
     .gasLimit(21000)
     .value(BigDecimal.valueOf(0.3).multiply(BigDecimal.TEN.pow(18)).toBigInteger())
     .nonce(0)
