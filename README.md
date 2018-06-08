@@ -26,19 +26,6 @@ dependencies {
 }
 ```
 
-## Register a scheme for your app in the AndroidManifest.xml
-
-```
-<activity android:name=".MyUriActivity">
-    <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="myapp" android:host="myapp" />
-    </intent-filter>
-</activity>
-```
-
 ## Handle Trust callbacks
 
 In your signing activity `Trust`.
