@@ -22,7 +22,7 @@ allprojects {
 2. Add dependency to your module:
 ```
 dependencies {
-    implementation 'com.github.TrustWallet:TrustSDK-Android:0.01.3'
+    implementation 'com.github.TrustWallet:TrustSDK-Android:$version'
 }
 ```
 
