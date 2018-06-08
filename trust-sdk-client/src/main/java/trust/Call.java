@@ -26,9 +26,11 @@ public class Call<T extends Request> implements Parcelable {
         int error;
         if (resultCode == Activity.RESULT_CANCELED) {
             error = Trust.ErrorCode.CANCELED;
+        } else if (resultCode == Trust.RESULT_ERROR) {
+            error = data.getIntExtra(Trust.ExtraKey.ERROR, Trust.ErrorCode.UNKNOWN_ERROR);
         } else {
             signHex = data.getStringExtra(Trust.ExtraKey.SIGN);
-            error = data.getIntExtra(Trust.ExtraKey.ERROR, Trust.ErrorCode.UNKNOWN_ERROR);
+            error = data.getIntExtra(Trust.ExtraKey.ERROR, Trust.ErrorCode.NONE);
             if (error == Trust.ErrorCode.NONE && TextUtils.isEmpty(signHex)) {
                 error = Trust.ErrorCode.SIGN_NOT_AVAILABLE;
             }
