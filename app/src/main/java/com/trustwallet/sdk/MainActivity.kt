@@ -13,23 +13,11 @@ import java.math.BigDecimal
 import java.math.BigInteger
 
 class MainActivity : AppCompatActivity() {
-
     private var messageCall: Call? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        findViewById<Button>(R.id.sign_message).setOnClickListener {
-            Trust.signMessage()
-                    .message("")
-                    .isPersonal(false)
-                    .call(this)
-            //        messageCall = Trust.signMessage()
-            //                .message("")
-            //                .isPersonal(false)
-            //                .call(this)
-        }
 
         findViewById<Button>(R.id.sign_transaction).setOnClickListener {
             Trust.signTransaction()
@@ -40,7 +28,20 @@ class MainActivity : AppCompatActivity() {
                     .nonce(0)
                     .payload("0x")
                     .call(this)
+        }
 
+        findViewById<Button>(R.id.sign_message).setOnClickListener {
+            Trust.signMessage()
+                    .message("message to be signed")
+                    .isPersonal(false)
+                    .call(this)
+        }
+
+        findViewById<Button>(R.id.sign_personal_message).setOnClickListener {
+            Trust.signMessage()
+                    .message("personal message to be signed")
+                    .isPersonal(true)
+                    .call(this)
         }
     }
 
@@ -54,9 +55,11 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("ShowToast")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Trust.onActivityResult(requestCode, resultCode, data).subscribe { request, signHex ->
-            Toast.makeText(this, "Sign: $signHex", Toast.LENGTH_LONG)
-        }
+        Trust.onActivityResult(requestCode, resultCode, data).subscribe({
+            request, signHex -> Toast.makeText(this, "Success: $signHex", Toast.LENGTH_LONG).show()
+        }, {
+            request, error -> Toast.makeText(this, "Fail: $error", Toast.LENGTH_LONG).show()
+        })
         messageCall?.let {
             it.onActivityResult(requestCode, resultCode, data).subscribe { request, signHex ->
 
