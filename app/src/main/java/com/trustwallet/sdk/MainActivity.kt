@@ -38,10 +38,10 @@ class MainActivity : AppCompatActivity() {
                     .call(this)
         }
       
-        findViewById<Button>(R.id.sign_message).setOnClickListener {
+        findViewById<Button>(R.id.sign_personal_message).setOnClickListener {
             Trust.signMessage()
-                    .message("message to be signed")
-                    .isPersonal(false)
+                    .message("personal message to be signed")
+                    .isPersonal(true)
                     .call(this)
         }
 

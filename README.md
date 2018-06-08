@@ -22,7 +22,7 @@ allprojects {
 2. Add dependency to your module:
 ```
 dependencies {
-    implementation 'com.github.TrustWallet:TrustSDK-Android:0.01.2'
+    implementation 'com.github.TrustWallet:TrustSDK-Android:0.01.3'
 }
 ```
 
@@ -50,17 +50,17 @@ import Trust
 Override `onActivityResult` to obtain the signing result. Handle the response data and pass onSuccessListener and onFailureListener.
 
 ```
-    @SuppressLint("ShowToast")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Trust.onActivityResult(requestCode, resultCode, data).subscribe({
-            request, signHex -> Toast.makeText(this, "Success: $signHex", Toast.LENGTH_LONG).show()
-        }, {
-            request, error -> Toast.makeText(this, "Fail: $error", Toast.LENGTH_LONG).show()
-        })
-        messageCall?.let {
-            it.onActivityResult(requestCode, resultCode, data).subscribe { request, signHex ->
 
+        signMessageCall?.let {
+            it.onActivityResult(requestCode, resultCode, data) {response ->
+                Log.d("SIGN_TAG", "Data: " + response.result)
+            }
+        }
+        signTransactionCall?.let {
+            it.onActivityResult(requestCode, resultCode, data) {response ->
+                Log.d("SIGN_TAG", "Data: " + response.result)
             }
         }
     }
