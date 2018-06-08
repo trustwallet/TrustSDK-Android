@@ -7,14 +7,20 @@
     android:layout_height="match_parent"
     >
     <Button
+        android:id="@+id/sign_transaction"
+        android:text="@string/sign_transaction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    <Button
         android:id="@+id/sign_message"
         android:text="@string/sign_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
     <Button
-        android:id="@+id/sign_transaction"
-        android:text="@string/sign_transaction"
+        android:id="@+id/sign_personal_message"
+        android:text="@string/sign_personal_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />

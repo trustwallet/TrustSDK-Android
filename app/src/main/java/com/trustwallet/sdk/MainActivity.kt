@@ -14,20 +14,12 @@ import java.math.BigDecimal
 import java.math.BigInteger
 
 class MainActivity : AppCompatActivity() {
-
     private var signMessageCall: Call<SignMessageRequest>? = null
-
     private var signTransactionCall: Call<SignTransactionRequest>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        findViewById<Button>(R.id.sign_message).setOnClickListener {
-            signMessageCall = Trust.signMessage()
-                    .message("Hello world!!!")
-                    .call(this)
-        }
 
         findViewById<Button>(R.id.sign_transaction).setOnClickListener {
             signTransactionCall = Trust.signTransaction()
@@ -39,6 +31,19 @@ class MainActivity : AppCompatActivity() {
                     .payload("0x")
                     .call(this)
         }
+      
+        findViewById<Button>(R.id.sign_message).setOnClickListener {
+            signMessageCall = Trust.signMessage()
+                    .message("Hello world!!!")
+                    .call(this)
+        }
+      
+        findViewById<Button>(R.id.sign_personal_message).setOnClickListener {
+            Trust.signMessage()
+                    .message("personal message to be signed")
+                    .isPersonal(true)
+                    .call(this)
+        }
 
         if (savedInstanceState != null) {
             signMessageCall = savedInstanceState.getParcelable("message_sign_call");
@@ -48,6 +53,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
         signMessageCall?.let {
             it.onActivityResult(requestCode, resultCode, data) {response ->
                 Log.d("SIGN_TAG", "Data: " + response.result)
