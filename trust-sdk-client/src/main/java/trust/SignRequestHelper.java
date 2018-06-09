@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Base64;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -64,10 +65,20 @@ public class SignRequestHelper implements Parcelable {
 
     private void fail(Activity activity, int error) {
         Intent intent = new Intent(request.getAction());
-        intent.setData(request.key());
-        intent.putExtra(Trust.ExtraKey.ERROR, error);
-        activity.setResult(Trust.RESULT_ERROR, intent);
-        activity.finish();
+        if (request.getCallbackUri() != null) {
+            Uri uri = request.getCallbackUri().buildUpon()
+                    .appendQueryParameter("src", getSrcUri(request.key()))
+                    .appendQueryParameter("error", String.valueOf(error))
+                    .build();
+            intent.setData(uri);
+            activity.startActivity(intent);
+            activity.finish();
+        } else {
+            intent.setData(request.key());
+            intent.putExtra(Trust.ExtraKey.ERROR, error);
+            activity.setResult(Trust.RESULT_ERROR, intent);
+            activity.finish();
+        }
     }
 
     public void onMessageSigned(Activity activity, String signHex) {
@@ -80,10 +91,24 @@ public class SignRequestHelper implements Parcelable {
 
     private void success(Activity activity, String signHex) {
         Intent intent = new Intent(request.getAction());
-        intent.setData(request.key());
-        intent.putExtra(Trust.ExtraKey.SIGN, signHex);
-        activity.setResult(Activity.RESULT_OK, intent);
-        activity.finish();
+        if (request.getCallbackUri() != null) {
+            Uri uri = request.getCallbackUri().buildUpon()
+                    .appendQueryParameter("src", getSrcUri(request.key()))
+                    .appendQueryParameter("result", signHex)
+                    .build();
+            intent.setData(uri);
+            activity.startActivity(intent);
+            activity.finish();
+        } else {
+            intent.setData(request.key());
+            intent.putExtra(Trust.ExtraKey.SIGN, signHex);
+            activity.setResult(Activity.RESULT_OK, intent);
+            activity.finish();
+        }
+    }
+
+    private String getSrcUri(Uri key) {
+        return new String(Base64.encode(key.toString().getBytes(), Base64.DEFAULT));
     }
 
     private static boolean isSignUri(Uri uri) {

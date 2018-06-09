@@ -15,20 +15,23 @@ import trust.core.util.Hex;
 
 public class SignTransactionRequest implements Request, Parcelable {
     private final Transaction transaction;
+    private final Uri callbackUri;
     private final Uri uri;
 
-    private SignTransactionRequest(Transaction transaction) {
+    private SignTransactionRequest(Transaction transaction, Uri callbackUri) {
         this.transaction = transaction;
-        this.uri = toUri(transaction);
+        this.callbackUri = callbackUri;
+        this.uri = toUri(transaction, callbackUri);
     }
 
     private SignTransactionRequest(Parcel in) {
         transaction = in.readParcelable(Transaction.class.getClassLoader());
+        callbackUri = in.readParcelable(Uri.class.getClassLoader());
         uri = in.readParcelable(Uri.class.getClassLoader());
     }
 
-    private static Uri toUri(Transaction transaction) {
-        return new Uri.Builder()
+    private static Uri toUri(Transaction transaction, Uri callbackUri) {
+        Uri.Builder uriBuilder = new Uri.Builder()
                 .scheme("trust")
                 .authority(Trust.ACTION_SIGN_TRANSACTION)
                 .appendQueryParameter(Trust.ExtraKey.RECIPIENT,
@@ -42,8 +45,11 @@ public class SignTransactionRequest implements Request, Parcelable {
                 .appendQueryParameter(Trust.ExtraKey.GAS_LIMIT, String.valueOf(transaction.gasLimit))
                 .appendQueryParameter(Trust.ExtraKey.NONCE, String.valueOf(transaction.nonce))
                 .appendQueryParameter(Trust.ExtraKey.PAYLOAD, transaction.payload)
-                .appendQueryParameter(Trust.ExtraKey.LEAF_POSITION, String.valueOf(transaction.leafPosition))
-                .build();
+                .appendQueryParameter(Trust.ExtraKey.LEAF_POSITION, String.valueOf(transaction.leafPosition));
+        if (callbackUri != null) {
+            uriBuilder.appendQueryParameter("callback", callbackUri.toString());
+        }
+        return uriBuilder.build();
     }
 
     @Override
@@ -61,6 +67,12 @@ public class SignTransactionRequest implements Request, Parcelable {
         return Trust.ACTION_SIGN_TRANSACTION;
     }
 
+    @Nullable
+    @Override
+    public Uri getCallbackUri() {
+        return callbackUri;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -69,6 +81,7 @@ public class SignTransactionRequest implements Request, Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(transaction, flags);
+        dest.writeParcelable(callbackUri, flags);
         dest.writeParcelable(uri, flags);
     }
 
@@ -98,6 +111,7 @@ public class SignTransactionRequest implements Request, Parcelable {
         private Address contract;
         private long nonce;
         private long leafPosition;
+        private String callbackUri;
 
         public Builder recipient(Address recipient) {
             this.recipient = recipient;
@@ -150,6 +164,11 @@ public class SignTransactionRequest implements Request, Parcelable {
             return this;
         }
 
+        public Builder callbackUri(String callbackUri) {
+            this.callbackUri = callbackUri;
+            return this;
+        }
+
         public Builder transaction(Transaction transaction) {
             recipient(transaction.recipient)
                     .contractAddress(transaction.contract)
@@ -188,13 +207,20 @@ public class SignTransactionRequest implements Request, Parcelable {
             try {
                 nonce(Long.valueOf(nonce));
             } catch (Exception ex) { /* Quietly */ }
+            callbackUri(uri.getQueryParameter("callback"));
             return this;
         }
 
         public SignTransactionRequest get() {
             Transaction transaction = new Transaction(
                     recipient, contract, value, gasPrice, gasLimit, nonce, payload, leafPosition);
-            return new SignTransactionRequest(transaction);
+            Uri callbackUri = null;
+            if (!TextUtils.isEmpty(this.callbackUri)) {
+                try {
+                    callbackUri = Uri.parse(this.callbackUri);
+                } catch (Exception ex) { /* Quietly */ }
+            }
+            return new SignTransactionRequest(transaction, callbackUri);
         }
 
         @Nullable

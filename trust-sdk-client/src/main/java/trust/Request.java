@@ -2,6 +2,7 @@ package trust;
 
 import android.net.Uri;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 public interface Request extends Parcelable {
 
@@ -10,5 +11,8 @@ public interface Request extends Parcelable {
     Uri key();
 
     String getAction();
+
+    @Nullable
+    Uri getCallbackUri();
 
 }
