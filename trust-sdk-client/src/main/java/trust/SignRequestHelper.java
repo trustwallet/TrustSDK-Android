@@ -1,6 +1,7 @@
 package trust;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcel;
@@ -98,8 +99,16 @@ public class SignRequestHelper implements Parcelable {
                     .appendQueryParameter("result", signBase64)
                     .build();
             intent.setData(uri);
-            activity.startActivity(intent);
-            activity.finish();
+            if (Trust.canStartActivity(activity, intent)) {
+                activity.startActivity(intent);
+                activity.finish();
+            } else {
+                new AlertDialog.Builder(activity)
+                        .setTitle("No application found")
+                        .setMessage("No proper application to handle result")
+                        .create()
+                        .show();
+            }
         } else {
             intent.setData(request.key());
             intent.putExtra(Trust.ExtraKey.SIGN, signBase64);

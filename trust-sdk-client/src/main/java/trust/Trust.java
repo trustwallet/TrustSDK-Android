@@ -56,7 +56,7 @@ public abstract class Trust {
         }
     }
 
-    private static boolean canStartActivity(Context context, Intent intent) {
+    static boolean canStartActivity(Context context, Intent intent) {
         PackageManager pm = context.getPackageManager();
         return pm.queryIntentActivities(intent, 0).size() > 0;
     }
