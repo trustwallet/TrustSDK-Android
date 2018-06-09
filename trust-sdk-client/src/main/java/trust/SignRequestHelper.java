@@ -81,27 +81,28 @@ public class SignRequestHelper implements Parcelable {
         }
     }
 
-    public void onMessageSigned(Activity activity, String signHex) {
-        success(activity, signHex);
+    public void onMessageSigned(Activity activity, byte[] sign) {
+        success(activity, sign);
     }
 
-    public void onTransactionSigned(Activity activity, String signHex) {
-        success(activity, signHex);
+    public void onTransactionSigned(Activity activity, byte[] sign) {
+        success(activity, sign);
     }
 
-    private void success(Activity activity, String signHex) {
-        Intent intent = new Intent(request.getAction());
+    private void success(Activity activity, byte[] sign) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        String signBase64 = new String(Base64.encode(sign, Base64.DEFAULT));
         if (request.getCallbackUri() != null) {
             Uri uri = request.getCallbackUri().buildUpon()
                     .appendQueryParameter("src", getSrcUri(request.key()))
-                    .appendQueryParameter("result", signHex)
+                    .appendQueryParameter("result", signBase64)
                     .build();
             intent.setData(uri);
             activity.startActivity(intent);
             activity.finish();
         } else {
             intent.setData(request.key());
-            intent.putExtra(Trust.ExtraKey.SIGN, signHex);
+            intent.putExtra(Trust.ExtraKey.SIGN, signBase64);
             activity.setResult(Activity.RESULT_OK, intent);
             activity.finish();
         }

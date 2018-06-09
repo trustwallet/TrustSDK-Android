@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), SignRequestHelper.Callback {
                         signHelper.onSignCancel(this@MainActivity)
                     }
                     .setPositiveButton("ok") {dialog, which ->
-                        signHelper.onMessageSigned(this, "Hello!")
+                        signHelper.onMessageSigned(this, "Hello!".toByteArray())
                     }
                     .show()
 
@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity(), SignRequestHelper.Callback {
                         signHelper.onSignCancel(this@MainActivity)
                     }
                     .setPositiveButton("ok") {dialog, which ->
-                        signHelper.onMessageSigned(this, "Hello personal!")
+                        signHelper.onMessageSigned(this, "Hello personal!".toByteArray())
                     }
                     .show()
 

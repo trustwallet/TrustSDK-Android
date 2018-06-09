@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.util.Base64;
+
+import trust.core.util.Hex;
 
 public class Call<T extends Request> implements Parcelable {
     private final T request;
@@ -29,7 +32,8 @@ public class Call<T extends Request> implements Parcelable {
         } else if (resultCode == Trust.RESULT_ERROR) {
             error = data.getIntExtra(Trust.ExtraKey.ERROR, Trust.ErrorCode.UNKNOWN_ERROR);
         } else {
-            signHex = data.getStringExtra(Trust.ExtraKey.SIGN);
+            String base64 = data.getStringExtra(Trust.ExtraKey.SIGN);
+            signHex = Hex.byteArrayToHexString(Base64.decode(base64, Base64.DEFAULT));
             error = data.getIntExtra(Trust.ExtraKey.ERROR, Trust.ErrorCode.NONE);
             if (error == Trust.ErrorCode.NONE && TextUtils.isEmpty(signHex)) {
                 error = Trust.ErrorCode.SIGN_NOT_AVAILABLE;

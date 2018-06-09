@@ -1,6 +1,7 @@
 package com.trustwallet.sdk
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -10,6 +11,7 @@ import trust.SignMessageRequest
 import trust.SignTransactionRequest
 import trust.Trust
 import trust.core.entity.Address
+import trust.core.util.Hex
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -25,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.sign_transaction).setOnClickListener {
             signTransactionCall = Trust.signTransaction()
                     .recipient(Address("0x3637a62430C67Fe822f7136D2d9D74bDDd7A26C1"))
-                    .gasPrice(BigInteger.valueOf(16).multiply(BigInteger.TEN.pow(9)))
+                    .gasPrice(BigInteger.valueOf(16000000000))
                     .gasLimit(21000)
                     .value(BigDecimal.valueOf(0.3).multiply(BigDecimal.TEN.pow(18)).toBigInteger())
                     .nonce(0)
@@ -38,7 +40,12 @@ class MainActivity : AppCompatActivity() {
                     .message("Hello world!!!")
                     .call(this)
         }
-      
+        findViewById<Button>(R.id.sign_msg_with_callback).setOnClickListener {
+            signMessageCall = Trust.signMessage()
+                    .message("Hello world!!!")
+                    .callbackUri(Uri.parse("https://google.com?q=trust").toString())
+                    .call(this)
+        }
         findViewById<Button>(R.id.sign_personal_message).setOnClickListener {
             signPersonalMessageCall = Trust.signPersonalMessage()
                     .message("personal message to be signed")
@@ -57,7 +64,7 @@ class MainActivity : AppCompatActivity() {
 
         signMessageCall?.let {
             it.onActivityResult(requestCode, resultCode, data) {response ->
-                Log.d("SIGN_TAG", "Data: " + response.result)
+                Log.d("SIGN_TAG", "Data: " + (String(Hex.hexStringToByteArray(response.result)!!)))
             }
         }
         signPersonalMessageCall?.let {
