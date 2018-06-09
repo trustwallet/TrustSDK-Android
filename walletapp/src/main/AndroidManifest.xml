@@ -19,7 +19,9 @@
                 <data android:scheme="trust" android:host="sign-transaction" />
                 <data android:scheme="trust" android:host="sign-message" />
                 <data android:scheme="trust" android:host="sign-personal-message" />
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
     </application>
