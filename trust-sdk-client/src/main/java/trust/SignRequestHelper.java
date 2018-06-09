@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.TextUtils;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import trust.core.entity.Message;
 import trust.core.entity.Transaction;
@@ -13,12 +15,19 @@ import trust.core.entity.Transaction;
 public class SignRequestHelper implements Parcelable {
     private Request request;
 
+    private static final Set<String> hosts = new HashSet<String>() {{
+        add(Trust.ACTION_SIGN_TRANSACTION);
+        add(Trust.ACTION_SIGN_MESSAGE);
+        add(Trust.ACTION_SIGN_PERSONAL_MESSAGE);
+
+    }};
+
     public SignRequestHelper(Intent intent, Callback callback) {
-        final String action = intent.getAction();
         final Uri uri = intent.getData();
-        if (TextUtils.isEmpty(action) || !isSignUri(uri)) {
+        if (!isSignUri(uri)) {
             return;
         }
+        final String action = uri.getAuthority();
 
         switch (action) {
             case Trust.ACTION_SIGN_PERSONAL_MESSAGE:
@@ -78,11 +87,8 @@ public class SignRequestHelper implements Parcelable {
     }
 
     private static boolean isSignUri(Uri uri) {
-        return uri == null
-                || !"eth".equals(uri.getScheme())
-                || uri.getPathSegments() == null
-                || uri.getPathSegments().size() < 2
-                || !"sign".equals(uri.getPathSegments().get(0));
+        return uri != null && "trust".equals(uri.getScheme())
+                && hosts.contains(uri.getHost());
     }
 
     @Override

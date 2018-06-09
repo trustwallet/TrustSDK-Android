@@ -30,7 +30,7 @@ public class SignTransactionRequest implements Request, Parcelable {
     private static Uri toUri(Transaction transaction) {
         return new Uri.Builder()
                 .scheme("trust")
-                .path("sign-transaction")
+                .authority(Trust.ACTION_SIGN_TRANSACTION)
                 .appendQueryParameter(Trust.ExtraKey.RECIPIENT,
                         transaction.recipient == null ? "" : transaction.recipient.toString())
                 .appendQueryParameter(Trust.ExtraKey.CONTRACT,

@@ -8,9 +8,9 @@ import android.net.Uri;
 
 public abstract class Trust {
 
-    public static final String ACTION_SIGN_TRANSACTION = "trust.sign-transaction";
-    public static final String ACTION_SIGN_MESSAGE = "trust.sign-message";
-    public static final String ACTION_SIGN_PERSONAL_MESSAGE = "trust.sign-personal-message";
+    public static final String ACTION_SIGN_TRANSACTION = "sign-transaction";
+    public static final String ACTION_SIGN_MESSAGE = "sign-message";
+    public static final String ACTION_SIGN_PERSONAL_MESSAGE = "sign-personal-message";
 
     public static final int RESULT_ERROR = 1;
 
@@ -37,7 +37,7 @@ public abstract class Trust {
     }
 
     public static <T extends Request> Call<T> execute(final Activity activity, T request) {
-        final Intent intent = new Intent(request.getAction());
+        final Intent intent = new Intent();
         intent.setData(request.key());
         if (canStartActivity(activity, intent)) {
             activity.startActivityForResult(intent, REQUEST_CODE_SIGN);

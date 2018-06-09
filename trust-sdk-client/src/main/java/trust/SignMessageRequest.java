@@ -27,7 +27,7 @@ public final class SignMessageRequest implements Request, Parcelable {
         byte[] value = Base64.encode(message.value.getBytes(), Base64.DEFAULT);
         return new Uri.Builder()
                 .scheme("trust")
-                .path(message.isPersonal ? "sign-personal-message" : "sign-message")
+                .authority(message.isPersonal ? Trust.ACTION_SIGN_PERSONAL_MESSAGE : Trust.ACTION_SIGN_MESSAGE)
                 .appendQueryParameter(Trust.ExtraKey.MESSAGE, new String(value))
                 .appendQueryParameter(Trust.ExtraKey.LEAF_POSITION, String.valueOf(message.leafPosition))
                 .build();
@@ -98,7 +98,7 @@ public final class SignMessageRequest implements Request, Parcelable {
         public Builder uri(Uri uri) {
             String value = uri.getQueryParameter(Trust.ExtraKey.MESSAGE);
             message = new String(Base64.decode(value, Base64.DEFAULT));
-            isPersonal = "sign-personal-message".equals(uri.getLastPathSegment());
+            isPersonal = "sign-personal-message".equals(uri.getAuthority());
             try {
                 leafPosition = Long.valueOf(uri.getQueryParameter(Trust.ExtraKey.LEAF_POSITION));
             } catch (NumberFormatException ex) { /* Quietly */ }
