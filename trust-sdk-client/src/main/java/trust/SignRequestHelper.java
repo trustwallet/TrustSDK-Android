@@ -14,6 +14,12 @@ import java.util.Set;
 import trust.core.entity.Message;
 import trust.core.entity.Transaction;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+import static trust.Trust.ErrorCode.CANCELED;
+import static trust.Trust.ErrorCode.NONE;
+import static trust.Trust.RESULT_ERROR;
+
 public class SignRequestHelper implements Parcelable {
     private Request request;
 
@@ -54,31 +60,11 @@ public class SignRequestHelper implements Parcelable {
     }
 
     public void onSignCancel(Activity activity) {
-        fail(activity, Trust.ErrorCode.CANCELED);
+        fail(activity, CANCELED);
     }
 
     public void onSignError(Activity activity, int error) {
         fail(activity, error);
-    }
-
-    private void fail(Activity activity, int error) {
-        Intent intent = new Intent(request.getAction());
-        if (request.getCallbackUri() != null) {
-            Uri uri = request.getCallbackUri().buildUpon()
-                    .appendQueryParameter("src", getSrcUri(request.key()))
-                    .appendQueryParameter("error", String.valueOf(error))
-                    .build();
-            intent.setData(uri);
-            activity.startActivity(intent);
-            activity.finish();
-        } else {
-            intent.setData(request.key());
-            intent.putExtra(Trust.ExtraKey.ERROR, error);
-            activity.setResult(
-                    error == Trust.ErrorCode.CANCELED ? Activity.RESULT_CANCELED : Trust.RESULT_ERROR,
-                    intent);
-            activity.finish();
-        }
     }
 
     public void onMessageSigned(Activity activity, byte[] sign) {
@@ -90,30 +76,59 @@ public class SignRequestHelper implements Parcelable {
     }
 
     private void success(Activity activity, byte[] sign) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        String signBase64 = new String(Base64.encode(sign, Base64.DEFAULT));
-        if (request.getCallbackUri() != null) {
-            Uri uri = request.getCallbackUri().buildUpon()
-                    .appendQueryParameter("src", getSrcUri(request.key()))
-                    .appendQueryParameter("result", signBase64)
-                    .build();
-            intent.setData(uri);
-            if (Trust.canStartActivity(activity, intent)) {
-                activity.startActivity(intent);
-                activity.finish();
+        result(activity, NONE, sign);
+    }
+
+    private void fail(Activity activity, int error) {
+        result(activity, error, null);
+    }
+
+    private void result(Activity activity, int error, byte[] sign) {
+        Intent intent = makeResultIntent(error, sign);
+        if (request.getCallbackUri() == null) {
+            int code;
+            if (error != NONE) {
+                code = error == CANCELED ? RESULT_CANCELED : RESULT_ERROR;
             } else {
-                new AlertDialog.Builder(activity)
-                        .setTitle("No application found")
-                        .setMessage("No proper application to handle result")
-                        .create()
-                        .show();
+                code = RESULT_OK;
             }
-        } else {
-            intent.setData(request.key());
-            intent.putExtra(Trust.ExtraKey.SIGN, signBase64);
-            activity.setResult(Activity.RESULT_OK, intent);
+            activity.setResult(code, intent);
             activity.finish();
+        } else if (Trust.canStartActivity(activity, intent)) {
+            activity.startActivity(intent);
+            activity.finish();
+        } else {
+            new AlertDialog.Builder(activity)
+                    .setTitle("No application found")
+                    .setMessage("No proper application to handle result")
+                    .create()
+                    .show();
         }
+    }
+
+    private Intent makeResultIntent(int error, byte[] sign) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        String signBase64 = null;
+        if (sign != null && sign.length > 0) {
+            signBase64 = new String(Base64.encode(sign, Base64.DEFAULT));
+        } else if (error == NONE) {
+            error = Trust.ErrorCode.SIGN_NOT_AVAILABLE;
+        }
+        Uri data = request.key();
+        if (request.getCallbackUri() != null) {
+            Uri.Builder dataBuilder = request.getCallbackUri().buildUpon()
+                    .appendQueryParameter("src", getSrcUri(request.key()));
+            if (error == NONE) {
+                dataBuilder.appendQueryParameter("result", signBase64);
+            } else {
+                dataBuilder.appendQueryParameter("error", String.valueOf(error));
+            }
+            data = dataBuilder.build();
+        }
+        intent.setData(data);
+        intent.putExtra(Trust.ExtraKey.SIGN, signBase64);
+        intent.putExtra(Trust.ExtraKey.ERROR, error);
+        return intent;
     }
 
     private String getSrcUri(Uri key) {

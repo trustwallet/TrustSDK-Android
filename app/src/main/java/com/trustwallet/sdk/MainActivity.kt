@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.sign_msg_with_callback).setOnClickListener {
             signMessageCall = Trust.signMessage()
                     .message("Hello world!!!")
-                    .callbackUri(Uri.parse("https://google.com?q=trust").toString())
+                    .callbackUri(Uri.parse("https://google.com/search?q=trust").toString())
                     .call(this)
         }
         findViewById<Button>(R.id.sign_personal_message).setOnClickListener {
@@ -64,17 +64,18 @@ class MainActivity : AppCompatActivity() {
 
         signMessageCall?.let {
             it.onActivityResult(requestCode, resultCode, data) {response ->
-                Log.d("SIGN_TAG", "Data: " + (String(Hex.hexStringToByteArray(response.result)!!)))
+                val result = response.result ?: ""
+                Log.d("SIGN_TAG", "Data: " + (String(Hex.hexStringToByteArray(result)!!) + "; Error: " + response.error))
             }
         }
         signPersonalMessageCall?.let {
             it.onActivityResult(requestCode, resultCode, data) {response ->
-                Log.d("SIGN_TAG", "Data: " + response.result)
+                Log.d("SIGN_TAG", "Data: " + response.result + "; Error: " + response.error)
             }
         }
         signTransactionCall?.let {
             it.onActivityResult(requestCode, resultCode, data) {response ->
-                Log.d("SIGN_TAG", "Data: " + response.result)
+                Log.d("SIGN_TAG", "Data: " + response.result + "; Error: " + response.error)
             }
         }
     }
