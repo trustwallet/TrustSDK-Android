@@ -36,7 +36,7 @@ public class Call<T extends Request> implements Parcelable {
             signHex = Hex.byteArrayToHexString(Base64.decode(base64, Base64.DEFAULT));
             error = data.getIntExtra(Trust.ExtraKey.ERROR, Trust.ErrorCode.NONE);
             if (error == Trust.ErrorCode.NONE && TextUtils.isEmpty(signHex)) {
-                error = Trust.ErrorCode.SIGN_NOT_AVAILABLE;
+                error = Trust.ErrorCode.INVALID_REQUEST;
             }
         }
         Response<T> response = new Response<>(request, signHex, error);

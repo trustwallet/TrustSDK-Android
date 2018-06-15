@@ -112,7 +112,7 @@ public class SignRequestHelper implements Parcelable {
         if (sign != null && sign.length > 0) {
             signBase64 = new String(Base64.encode(sign, Base64.DEFAULT));
         } else if (error == NONE) {
-            error = Trust.ErrorCode.SIGN_NOT_AVAILABLE;
+            error = Trust.ErrorCode.INVALID_REQUEST;
         }
         Uri data = request.key();
         if (request.getCallbackUri() != null) {
