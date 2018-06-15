@@ -76,10 +76,10 @@ public abstract class Trust {
     }
 
     public interface ErrorCode {
-        int UNKNOWN_ERROR = -2;
-        int NONE = -1;
-        int CANCELED = 0;
-        int INVALID_REQUEST = 1;
-        int WATCH_ONLY = 2;
+        int UNKNOWN = -1;
+        int NONE = 0;
+        int CANCELED = 1;
+        int INVALID_REQUEST = 2;
+        int WATCH_ONLY = 3;
     }
 }
