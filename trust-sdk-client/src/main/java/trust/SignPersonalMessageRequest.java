@@ -9,17 +9,17 @@ import android.util.Base64;
 
 import trust.core.entity.Message;
 
-public final class SignMessageRequest extends BaseSignMessageRequest<String> implements Request, Parcelable {
+public final class SignPersonalMessageRequest extends BaseSignMessageRequest<String> implements Request, Parcelable {
 
-    public static SignMessageRequest.Builder builder() {
-        return new SignMessageRequest.Builder();
+    public static SignPersonalMessageRequest.Builder builder() {
+        return new SignPersonalMessageRequest.Builder();
     }
 
-    private SignMessageRequest(Message<String> message, Uri callbackUri) {
+    private SignPersonalMessageRequest(Message<String> message, Uri callbackUri) {
         super(message, callbackUri);
     }
 
-    private SignMessageRequest(Parcel in) {
+    private SignPersonalMessageRequest(Parcel in) {
         super(in);
     }
 
@@ -30,7 +30,7 @@ public final class SignMessageRequest extends BaseSignMessageRequest<String> imp
 
     @Override
     String getAuthority() {
-        return Trust.ACTION_SIGN_MESSAGE;
+        return Trust.ACTION_SIGN_PERSONAL_MESSAGE;
     }
 
     @Override
@@ -43,15 +43,15 @@ public final class SignMessageRequest extends BaseSignMessageRequest<String> imp
         super.writeToParcel(dest, flags);
     }
 
-    public static final Creator<SignMessageRequest> CREATOR = new Creator<SignMessageRequest>() {
+    public static final Creator<SignPersonalMessageRequest> CREATOR = new Creator<SignPersonalMessageRequest>() {
         @Override
-        public SignMessageRequest createFromParcel(Parcel in) {
-            return new SignMessageRequest(in);
+        public SignPersonalMessageRequest createFromParcel(Parcel in) {
+            return new SignPersonalMessageRequest(in);
         }
 
         @Override
-        public SignMessageRequest[] newArray(int size) {
-            return new SignMessageRequest[size];
+        public SignPersonalMessageRequest[] newArray(int size) {
+            return new SignPersonalMessageRequest[size];
         }
     };
 
@@ -82,7 +82,7 @@ public final class SignMessageRequest extends BaseSignMessageRequest<String> imp
         }
 
         public Builder uri(Uri uri) {
-            if (!Trust.ACTION_SIGN_MESSAGE.equals(uri.getAuthority())) {
+            if (!Trust.ACTION_SIGN_PERSONAL_MESSAGE.equals(uri.getAuthority())) {
                 throw new IllegalArgumentException("Illegal message");
             }
 
@@ -101,7 +101,7 @@ public final class SignMessageRequest extends BaseSignMessageRequest<String> imp
             return this;
         }
 
-        public SignMessageRequest get() {
+        public SignPersonalMessageRequest get() {
             Uri callbackUri = null;
             if (!TextUtils.isEmpty(this.callbackUri)) {
                 try {
@@ -109,10 +109,10 @@ public final class SignMessageRequest extends BaseSignMessageRequest<String> imp
                 } catch (Exception ex) { /* Quietly */ }
             }
             Message<String> message = new Message<>(this.message, url, leafPosition);
-            return new SignMessageRequest(message, callbackUri);
+            return new SignPersonalMessageRequest(message, callbackUri);
         }
 
-        public Call<SignMessageRequest> call(Activity activity) {
+        public Call<SignPersonalMessageRequest> call(Activity activity) {
             return Trust.execute(activity, get());
         }
     }

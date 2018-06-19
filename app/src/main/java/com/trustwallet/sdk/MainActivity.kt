@@ -6,18 +6,17 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Button
-import trust.Call
-import trust.SignMessageRequest
-import trust.SignTransactionRequest
-import trust.Trust
+import trust.*
 import trust.core.entity.Address
+import trust.core.entity.TypedData
 import trust.core.util.Hex
 import java.math.BigDecimal
 import java.math.BigInteger
 
 class MainActivity : AppCompatActivity() {
     private var signMessageCall: Call<SignMessageRequest>? = null
-    private var signPersonalMessageCall: Call<SignMessageRequest>? = null
+    private var signPersonalMessageCall: Call<SignPersonalMessageRequest>? = null
+    private var signTypedMessageCall: Call<SignTypedMessageRequest>? = null
     private var signTransactionCall: Call<SignTransactionRequest>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +48,13 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.sign_personal_message).setOnClickListener {
             signPersonalMessageCall = Trust.signPersonalMessage()
                     .message("personal message to be signed")
-                    .isPersonal(true)
+                    .call(this)
+        }
+        findViewById<Button>(R.id.sign_typed_message).setOnClickListener {
+            signTypedMessageCall = Trust.signTypedMessage()
+                    .message(
+                            TypedData("Var1", "string", "Val1"),
+                            TypedData("Var2", "int", 10001))
                     .call(this)
         }
 
@@ -65,7 +70,7 @@ class MainActivity : AppCompatActivity() {
         signMessageCall?.let {
             it.onActivityResult(requestCode, resultCode, data) {response ->
                 val result = response.result ?: ""
-                Log.d("SIGN_TAG", "Data: " + (String(Hex.hexStringToByteArray(result)!!) + "; Error: " + response.error))
+                Log.d("SIGN_TAG", "Data: " + (String(Hex.hexStringToByteArray(result)) + "; Error: " + response.error))
             }
         }
         signPersonalMessageCall?.let {
@@ -76,6 +81,12 @@ class MainActivity : AppCompatActivity() {
         signTransactionCall?.let {
             it.onActivityResult(requestCode, resultCode, data) {response ->
                 Log.d("SIGN_TAG", "Data: " + response.result + "; Error: " + response.error)
+            }
+        }
+        signTypedMessageCall?.let {
+            it.onActivityResult(requestCode, resultCode, data) {response ->
+                val result = response.result ?: ""
+                Log.d("SIGN_TAG", "Data: " + (String(Hex.hexStringToByteArray(result)) + "; Error: " + response.error))
             }
         }
     }

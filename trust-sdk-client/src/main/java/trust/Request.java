@@ -10,8 +10,6 @@ public interface Request extends Parcelable {
 
     Uri key();
 
-    String getAction();
-
     @Nullable
     Uri getCallbackUri();
 

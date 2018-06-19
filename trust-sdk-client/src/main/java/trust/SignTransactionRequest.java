@@ -62,11 +62,6 @@ public class SignTransactionRequest implements Request, Parcelable {
         return uri;
     }
 
-    @Override
-    public String getAction() {
-        return Trust.ACTION_SIGN_TRANSACTION;
-    }
-
     @Nullable
     @Override
     public Uri getCallbackUri() {

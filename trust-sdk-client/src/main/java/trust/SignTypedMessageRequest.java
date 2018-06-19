@@ -6,31 +6,39 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 
 import trust.core.entity.Message;
+import trust.core.entity.TypedData;
 
-public final class SignMessageRequest extends BaseSignMessageRequest<String> implements Request, Parcelable {
+public final class SignTypedMessageRequest extends BaseSignMessageRequest<TypedData[]> implements Request, Parcelable {
 
-    public static SignMessageRequest.Builder builder() {
-        return new SignMessageRequest.Builder();
+    public static SignTypedMessageRequest.Builder builder() {
+        return new SignTypedMessageRequest.Builder();
     }
 
-    private SignMessageRequest(Message<String> message, Uri callbackUri) {
+    private SignTypedMessageRequest(Message<TypedData[]> message, Uri callbackUri) {
         super(message, callbackUri);
     }
 
-    private SignMessageRequest(Parcel in) {
+    private SignTypedMessageRequest(Parcel in) {
         super(in);
     }
 
     @Override
     byte[] getData() {
-        return ((Message<String>) body()).value.getBytes();
+        Message<TypedData[]> body = body();
+        return new Gson().toJson(body.value).getBytes();
     }
 
     @Override
     String getAuthority() {
-        return Trust.ACTION_SIGN_MESSAGE;
+        return Trust.ACTION_SIGN_TYPED_MESSAGE;
     }
 
     @Override
@@ -43,25 +51,25 @@ public final class SignMessageRequest extends BaseSignMessageRequest<String> imp
         super.writeToParcel(dest, flags);
     }
 
-    public static final Creator<SignMessageRequest> CREATOR = new Creator<SignMessageRequest>() {
+    public static final Creator<SignTypedMessageRequest> CREATOR = new Creator<SignTypedMessageRequest>() {
         @Override
-        public SignMessageRequest createFromParcel(Parcel in) {
-            return new SignMessageRequest(in);
+        public SignTypedMessageRequest createFromParcel(Parcel in) {
+            return new SignTypedMessageRequest(in);
         }
 
         @Override
-        public SignMessageRequest[] newArray(int size) {
-            return new SignMessageRequest[size];
+        public SignTypedMessageRequest[] newArray(int size) {
+            return new SignTypedMessageRequest[size];
         }
     };
 
     public static class Builder {
-        private String message;
+        private TypedData[] message;
         private long leafPosition;
         private String callbackUri;
         private String url;
 
-        public Builder message(String message) {
+        public Builder message(TypedData... message) {
             this.message = message;
             return this;
         }
@@ -82,13 +90,15 @@ public final class SignMessageRequest extends BaseSignMessageRequest<String> imp
         }
 
         public Builder uri(Uri uri) {
-            if (!Trust.ACTION_SIGN_MESSAGE.equals(uri.getAuthority())) {
+            if (!Trust.ACTION_SIGN_TYPED_MESSAGE.equals(uri.getAuthority())) {
                 throw new IllegalArgumentException("Illegal message");
             }
 
             String value = uri.getQueryParameter(Trust.ExtraKey.MESSAGE);
-            message = new String(Base64.decode(value, Base64.DEFAULT));
-            url = uri.getQueryParameter(Trust.ExtraKey.URL);
+            Type type = new TypeToken<TypedData[]>() {}.getType();
+            String json = new String(Base64.decode(value, Base64.DEFAULT));
+            Log.e("JSON", json);
+            message = new Gson().fromJson(json, type);
             callbackUri = uri.getQueryParameter(Trust.ExtraKey.CALLBACK_URI);
             try {
                 leafPosition = Long.valueOf(uri.getQueryParameter(Trust.ExtraKey.LEAF_POSITION));
@@ -96,23 +106,23 @@ public final class SignMessageRequest extends BaseSignMessageRequest<String> imp
             return this;
         }
 
-        public Builder message(Message<String> message) {
+        public Builder message(Message<TypedData[]> message) {
             message(message.value).leafPosition(message.leafPosition).url(message.url);
             return this;
         }
 
-        public SignMessageRequest get() {
+        public SignTypedMessageRequest get() {
             Uri callbackUri = null;
             if (!TextUtils.isEmpty(this.callbackUri)) {
                 try {
                     callbackUri = Uri.parse(this.callbackUri);
                 } catch (Exception ex) { /* Quietly */ }
             }
-            Message<String> message = new Message<>(this.message, url, leafPosition);
-            return new SignMessageRequest(message, callbackUri);
+            Message<TypedData[]> message = new Message<>(this.message, url, leafPosition);
+            return new SignTypedMessageRequest(message, callbackUri);
         }
 
-        public Call<SignMessageRequest> call(Activity activity) {
+        public Call<SignTypedMessageRequest> call(Activity activity) {
             return Trust.execute(activity, get());
         }
     }

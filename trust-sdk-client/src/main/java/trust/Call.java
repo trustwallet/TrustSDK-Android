@@ -30,7 +30,7 @@ public class Call<T extends Request> implements Parcelable {
         if (resultCode == Activity.RESULT_CANCELED) {
             error = Trust.ErrorCode.CANCELED;
         } else if (resultCode == Trust.RESULT_ERROR) {
-            error = data.getIntExtra(Trust.ExtraKey.ERROR, Trust.ErrorCode.UNKNOWN_ERROR);
+            error = data.getIntExtra(Trust.ExtraKey.ERROR, Trust.ErrorCode.UNKNOWN);
         } else {
             String base64 = data.getStringExtra(Trust.ExtraKey.SIGN);
             signHex = Hex.byteArrayToHexString(Base64.decode(base64, Base64.DEFAULT));

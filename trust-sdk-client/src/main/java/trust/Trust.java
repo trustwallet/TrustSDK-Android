@@ -11,6 +11,7 @@ public abstract class Trust {
     public static final String ACTION_SIGN_TRANSACTION = "sign-transaction";
     public static final String ACTION_SIGN_MESSAGE = "sign-message";
     public static final String ACTION_SIGN_PERSONAL_MESSAGE = "sign-personal-message";
+    public static final String ACTION_SIGN_TYPED_MESSAGE = "sign-typed-message";
 
     public static final int RESULT_ERROR = 1;
 
@@ -32,8 +33,12 @@ public abstract class Trust {
         return SignMessageRequest.builder();
     }
 
-    public static SignMessageRequest.Builder signPersonalMessage() {
-        return SignMessageRequest.builder().isPersonal(true);
+    public static SignPersonalMessageRequest.Builder signPersonalMessage() {
+        return SignPersonalMessageRequest.builder();
+    }
+
+    public static SignTypedMessageRequest.Builder signTypedMessage() {
+        return SignTypedMessageRequest.builder();
     }
 
     public static <T extends Request> Call<T> execute(final Activity activity, T request) {
@@ -73,6 +78,8 @@ public abstract class Trust {
         String NONCE = "nonce";
         String LEAF_POSITION = "leaf_position";
         String MESSAGE = "message";
+        String URL = "url";
+        String CALLBACK_URI = "callback";
     }
 
     public interface ErrorCode {

@@ -13,6 +13,7 @@ import java.util.Set;
 
 import trust.core.entity.Message;
 import trust.core.entity.Transaction;
+import trust.core.entity.TypedData;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -23,10 +24,11 @@ import static trust.Trust.RESULT_ERROR;
 public class SignRequestHelper implements Parcelable {
     private Request request;
 
-    private static final Set<String> hosts = new HashSet<String>() {{
+    private static final Set<String> authorities = new HashSet<String>() {{
         add(Trust.ACTION_SIGN_TRANSACTION);
         add(Trust.ACTION_SIGN_MESSAGE);
         add(Trust.ACTION_SIGN_PERSONAL_MESSAGE);
+        add(Trust.ACTION_SIGN_TYPED_MESSAGE);
 
     }};
 
@@ -38,15 +40,20 @@ public class SignRequestHelper implements Parcelable {
         final String action = uri.getAuthority();
 
         switch (action) {
-            case Trust.ACTION_SIGN_PERSONAL_MESSAGE:
             case Trust.ACTION_SIGN_MESSAGE: {
                 request = SignMessageRequest.builder().uri(uri).get();
-                Message message = request.body();
-                if (message.isPersonal) {
-                    callback.signPersonalMessage(message);
-                } else {
-                    callback.signMessage(message);
-                }
+                Message<String> message = request.body();
+                callback.signMessage(message);
+            } break;
+            case Trust.ACTION_SIGN_PERSONAL_MESSAGE: {
+                request = SignPersonalMessageRequest.builder().uri(uri).get();
+                Message<String> message = request.body();
+                callback.signPersonalMessage(message);
+            } break;
+            case Trust.ACTION_SIGN_TYPED_MESSAGE: {
+                request = SignTypedMessageRequest.builder().uri(uri).get();
+                Message<TypedData[]> message = request.body();
+                callback.signTypedMessage(message);
             } break;
             case Trust.ACTION_SIGN_TRANSACTION: {
                 request = SignTransactionRequest.builder().uri(uri).get();
@@ -137,7 +144,7 @@ public class SignRequestHelper implements Parcelable {
 
     private static boolean isSignUri(Uri uri) {
         return uri != null && "trust".equals(uri.getScheme())
-                && hosts.contains(uri.getHost());
+                && authorities.contains(uri.getAuthority());
     }
 
     @Override
@@ -163,9 +170,11 @@ public class SignRequestHelper implements Parcelable {
     };
 
     public interface Callback {
-        void signMessage(Message message);
+        void signMessage(Message<String> message);
 
-        void signPersonalMessage(Message message);
+        void signPersonalMessage(Message<String> message);
+
+        void signTypedMessage(Message<TypedData[]> message);
 
         void signTransaction(Transaction transaction);
     }
