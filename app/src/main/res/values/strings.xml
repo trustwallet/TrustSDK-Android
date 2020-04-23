@@ -1,8 +1,4 @@
 <resources>
     <string name="app_name">TrustSdk</string>
-    <string name="sign_message">Sign message</string>
-    <string name="sign_transaction">Sign transaction</string>
-    <string name="sign_personal_message">Sign personal message</string>
-    <string name="sign_typed_message">Sign typed message</string>
-    <string name="sign_msg_with_callback">Sign message with callback</string>
+    <string name="get_accounts">Get Accounts</string>
 </resources>
