@@ -6,33 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-    <Button
-        android:id="@+id/sign_transaction"
-        android:text="@string/sign_transaction"
+    <TextView
+        android:id="@+id/result_out"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="300dp"
         />
     <Button
-        android:id="@+id/sign_message"
-        android:text="@string/sign_message"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
-    <Button
-        android:id="@+id/sign_personal_message"
-        android:text="@string/sign_personal_message"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
-    <Button
-        android:id="@+id/sign_typed_message"
-        android:text="@string/sign_typed_message"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
-    <Button
-        android:id="@+id/sign_msg_with_callback"
-        android:text="@string/sign_msg_with_callback"
+        android:id="@+id/get_accounts"
+        android:text="@string/get_accounts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />

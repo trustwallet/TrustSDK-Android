@@ -40,62 +40,27 @@ Override `onActivityResult` to obtain the signing result. Handle the response da
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        signMessageCall?.let {
-            it.onActivityResult(requestCode, resultCode, data) {response ->
-                Log.d("SIGN_TAG", "Data: " + response.result)
-            }
-        }
-        signTransactionCall?.let {
-            it.onActivityResult(requestCode, resultCode, data) {response ->
-                Log.d("SIGN_TAG", "Data: " + response.result)
-            }
-        }
+        getAccountsCall?.let {
+                    it.onActivityResult(requestCode, resultCode, data, OnCompleteListener<Array<Account>> { response ->
+                        val result = response.result?.map { account ->  "${account.address.data} ${account.coin.name}" }?.joinToString("\n")
+                        resultText.text = result
+                        Log.d("GET_ACCOUNTS", result ?: "")
+                    })
+                }
     }
 ```
 
 ### Sign a transaction
 
-To sign a transaction use this code:
+To get accounts use this code:
 
 ```
-Trust.signTransaction()
-    .recipient(Address("0x3637a62430C67Fe822f7136D2d9D74bDDd7A26C1"))
-    .gasPrice(BigInteger.valueOf(16).multiply(BigInteger.TEN.pow(9)))
-    .gasLimit(21000)
-    .value(BigDecimal.valueOf(0.3).multiply(BigDecimal.TEN.pow(18)).toBigInteger())
-    .nonce(0)
-    .payload("0x")
-    .call(this)
-```
-
-### Sign a message
-
-To sign a message use this code:
-
-```
-Trust.signMessage()
-    .message("message to be signed")
-    .call(this)
-```
-
-### Sign a personal message
-
-To sign a personal message use this code:
-
-```
-Trust.signPersonalMessage()
-    .message("message to be signed")
-    .call(this)
+getAccountsCall = Trust.execute(this, AccountsRequest(Coin.ETHEREUM, Coin.WAVES, Coin.ALGORAND, Coin.ATOM, Coin.BINANCE, Coin.BITCOINCASH))
 ```
 
 ## Example
 
 Trust SDK includes an example project with the above code. To run the example project clone the repo and build the project with Android Studio. Run the app on your emulator or device. Make sure that you have Trust Wallet installed on the device or simulator to test the full callback flow.
-
-## Authors
-
- * Maxim Rasputin
- * Marat Subkhankulov
 
 License
 
