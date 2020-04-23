@@ -10,7 +10,7 @@ The TrustSDK lets you sign Ethereum transactions and messages so that you can bu
 ## Add dependency
 
 1. Add jitpack to your root gradle file at the end of repositories:
-```
+```groovy
 allprojects {
     repositories {
 	...
@@ -20,7 +20,7 @@ allprojects {
 ```
 
 2. Add dependency to your module:
-```
+```groovy
 dependencies {
     implementation 'com.github.TrustWallet:TrustSDK-Android:$version'
 }
@@ -30,13 +30,9 @@ dependencies {
 
 In your signing activity `Trust`.
 
-```
-import Trust
-```
-
 Override `onActivityResult` to obtain the signing result. Handle the response data and pass onSuccessListener and onFailureListener.
 
-```
+```kotlin
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -54,7 +50,7 @@ Override `onActivityResult` to obtain the signing result. Handle the response da
 
 To get accounts use this code:
 
-```
+```kotlin
 getAccountsCall = Trust.execute(this, AccountsRequest(Coin.ETHEREUM, Coin.WAVES, Coin.ALGORAND, Coin.ATOM, Coin.BINANCE, Coin.BITCOINCASH))
 ```
 
