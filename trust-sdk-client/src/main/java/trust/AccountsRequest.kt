@@ -8,9 +8,9 @@ import kotlinx.android.parcel.Parcelize
 class AccountsRequest(vararg val coins: Coin) : Request<Array<Account>> {
 
     override fun data(): Uri {
-        val uriBuilder = Uri.parse("trust://${Trust.Host.GET_ACCOUNTS.key}").buildUpon()
-        for (coin in coins) {
-            uriBuilder.appendQueryParameter(Trust.ExtraKey.COINS.key, coin.index.toString())
+        val uriBuilder = Uri.parse("trust://${Trust.Host.SDK_GET_ACCOUNTS.key}").buildUpon()
+        for ((i, coin) in coins.withIndex()) {
+            uriBuilder.appendQueryParameter(Trust.ExtraKey.COINS.key + ".$i", coin.index.toString())
         }
         return uriBuilder.build()
     }

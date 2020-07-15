@@ -46,6 +46,6 @@ object Trust {
     }
 
     internal enum class Host(val key: String) {
-        GET_ACCOUNTS("get_accounts")
+        SDK_GET_ACCOUNTS("sdk_get_accounts")
     }
 }
