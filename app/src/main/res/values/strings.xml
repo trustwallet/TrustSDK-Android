@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">TrustSdk</string>
     <string name="get_accounts">Get Accounts</string>
+    <string name="get_accounts_deprecated">Get Accounts (Deprecated)</string>
 </resources>

@@ -10,6 +10,7 @@ import trust.*
 
 class MainActivity : AppCompatActivity() {
     private var getAccountsCall: Call<Array<Account>, AccountsRequest>? = null
+    private var sdkGetAccountsCall: Call<Array<Account>, GetAccountsRequest>? = null
     private lateinit var resultText: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,6 +21,9 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.get_accounts).setOnClickListener {
             getAccountsCall = Trust.execute(this, AccountsRequest(Coin.ETHEREUM, Coin.WAVES, Coin.ALGORAND, Coin.ATOM, Coin.BINANCE, Coin.BITCOINCASH))
+        }
+        findViewById<Button>(R.id.sdk_get_accounts).setOnClickListener {
+            sdkGetAccountsCall = Trust.execute(this, GetAccountsRequest(Coin.ETHEREUM, Coin.WAVES, Coin.ALGORAND, Coin.ATOM, Coin.BINANCE, Coin.BITCOINCASH))
         }
 
         if (savedInstanceState != null) {
@@ -32,9 +36,16 @@ class MainActivity : AppCompatActivity() {
 
         getAccountsCall?.let {
             it.onActivityResult(requestCode, resultCode, data, OnCompleteListener<Array<Account>> { response ->
-                val result = response.result?.map { account ->  "${account.address.data} ${account.coin.name}" }?.joinToString("\n")
+                val result = response.result?.joinToString("\n") { account -> "${account.address.data} ${account.coin.name}" }
                 resultText.text = result
                 Log.d("GET_ACCOUNTS", result ?: "")
+            })
+        }
+        sdkGetAccountsCall?.let {
+            it.onActivityResult(requestCode, resultCode, data, OnCompleteListener<Array<Account>> { response ->
+                val result = response.result?.joinToString("\n") { account -> "${account.address.data} ${account.coin.name}" }
+                resultText.text = result
+                Log.d("SDK_GET_ACCOUNTS", result ?: "")
             })
         }
     }

@@ -13,6 +13,12 @@
         />
     <Button
         android:id="@+id/get_accounts"
+        android:text="@string/get_accounts_deprecated"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    <Button
+        android:id="@+id/sdk_get_accounts"
         android:text="@string/get_accounts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
