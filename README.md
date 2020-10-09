@@ -7,7 +7,7 @@ The TrustSDK lets you sign Ethereum transactions and messages so that you can bu
 
 ## Demo
 
-![Sign Message and Transaction](docs/demo.gif)
+![Sign Message and Transaction](docs/demo.gif){:height="740px" width="360px"}
 
 ## Add dependency
 
