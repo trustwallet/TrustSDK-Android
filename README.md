@@ -7,6 +7,8 @@ The TrustSDK lets you sign Ethereum transactions and messages so that you can bu
 
 ## Demo
 
+![Sign Message and Transaction](docs/demo.gif)
+
 ## Add dependency
 
 1. Add jitpack to your root gradle file at the end of repositories:
