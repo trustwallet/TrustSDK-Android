@@ -48,7 +48,7 @@ Override `onActivityResult` to obtain the signing result. Handle the response da
 
 ### For all other requests
 
-Add deep link intent filter to your 'AndroidManifest.xml':
+Add deep link intent filter to your `AndroidManifest.xml`:
 ```xml
 <activity
 ...
