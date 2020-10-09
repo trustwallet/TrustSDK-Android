@@ -79,5 +79,6 @@ object Trust {
         SDK_GET_ACCOUNTS("sdk_get_accounts"),
         GET_ACCOUNTS("get_accounts"),
         TX_CALLBACK("tx_callback"),
+        SDK_TRANSACTION("sdk_transaction"),
     }
 }
