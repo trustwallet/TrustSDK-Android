@@ -6,9 +6,9 @@
 The TrustSDK lets you sign Ethereum transactions and messages so that you can build a native DApp without having to worry about keys or wallets. Follow these instructions to integrate TrustSDK in your native DApp.
 
 ## Demo
-1|
--|
-![Sign Message and Transaction](docs/demo.gif)|
+Get accounts|Sign transaction|Send transaction
+-|-|-
+![Accounts](docs/accounts.gif)|![Sign](docs/sign.gif)|![Send](docs/send.gif)
 
 ## Add dependency
 
