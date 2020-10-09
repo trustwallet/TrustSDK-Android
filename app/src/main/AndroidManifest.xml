@@ -12,11 +12,17 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation"
+            android:launchMode="singleTask"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <action android:name="android.intent.action.VIEW" />
+                <data android:scheme="trust_sdk" android:host="tx_callback" />
             </intent-filter>
         </activity>
     </application>

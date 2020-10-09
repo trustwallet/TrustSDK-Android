@@ -12,14 +12,20 @@
         android:layout_height="300dp"
         />
     <Button
-        android:id="@+id/get_accounts"
-        android:text="@string/get_accounts_deprecated"
+        android:id="@+id/sdk_get_accounts"
+        android:text="@string/get_accounts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
     <Button
-        android:id="@+id/sdk_get_accounts"
-        android:text="@string/get_accounts"
+        android:id="@+id/send_transaction"
+        android:text="@string/send_transaction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    <Button
+        android:id="@+id/sign_transaction"
+        android:text="@string/sign_transaction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
