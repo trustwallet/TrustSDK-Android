@@ -22,7 +22,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <action android:name="android.intent.action.VIEW" />
-                <data android:scheme="trust_sdk" android:host="tx_callback" />
+                <data android:scheme="app_scheme" android:host="tx_callback" />
             </intent-filter>
         </activity>
     </application>

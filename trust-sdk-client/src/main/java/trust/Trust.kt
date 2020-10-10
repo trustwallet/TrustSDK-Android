@@ -35,11 +35,13 @@ object Trust {
         }
     }
 
-    fun handleTransactionResult(intent: Intent?): TransactionResult? = if (intent?.data?.host == Host.TX_CALLBACK.key) {
+    fun handleTransferResult(intent: Intent?): TransactionResult? = if (intent?.data?.host == Host.TX_CALLBACK.key) {
+        val action = intent.data?.getQueryParameter(ExtraKey.ACTION.key)
         val signature = intent.data?.getQueryParameter(ExtraKey.TRANSACTION_SIGN.key)
         val hash = intent.data?.getQueryParameter(ExtraKey.TRANSACTION_HASH.key)
         val error = intent.data?.getQueryParameter(ExtraKey.CANCEL.key)
         when {
+            action != Action.TRANSFER.key -> null
             signature != null -> TransactionResult(signature = signature)
             hash != null -> TransactionResult(hash = hash)
             error != null -> TransactionResult(isCancelled = true)
@@ -73,6 +75,13 @@ object Trust {
            TRANSACTION_HASH("transaction_hash"),
            TRANSACTION_SIGN("transaction_sign"),
            CANCEL("cancel"),
+           ACTION("action"),
+    }
+
+    internal enum class Action(val key: String) {
+        TRANSFER("transfer"),
+        TRADE("trade"),
+        DELEGATE("delegate"),
     }
 
     internal enum class Host(val key: String) {

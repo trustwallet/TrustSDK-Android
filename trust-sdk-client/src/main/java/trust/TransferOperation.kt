@@ -7,7 +7,8 @@ import java.math.BigInteger
 class TransferOperation private constructor(
         val action: ActionType,
         val callback: Uri,
-        val assetId: String,
+        val coin: Int,
+        val tokenId: String?,
         val to: String,
         val amount: BigDecimal,
         val meta: String?,
@@ -19,7 +20,8 @@ class TransferOperation private constructor(
     data class Builder(
             var action: ActionType? = null,
             var callback: Uri? = null,
-            var assetId: String? = null,
+            var coin: Int? = null,
+            var tokenId: String? = null,
             var to: String? = null,
             var amount: BigDecimal? = null,
             var meta: String? = null,
@@ -41,11 +43,18 @@ class TransferOperation private constructor(
         fun callback(callback: Uri) = apply { this.callback = callback }
 
         /**
-         * Universal asset identifier
+         * Slip44 index
          *
-         * More info: https://developer.trustwallet.com/add_new_asset/universal_asset_id
+         * Exception: Use 20000714 for Binance Smart Chain
+         *
+         * More info: https://github.com/satoshilabs/slips/blob/master/slip-0044.md
          */
-        fun assetId(assetId: String) = apply { this.assetId = assetId }
+        fun coin(coin: Int) = apply { this.coin = coin }
+
+        /**
+         * (Optional) token, following standard of unique identifier on the blockhain as smart contract address or asset ID
+         */
+        fun tokenId(tokenId: String) = apply { this.tokenId = tokenId }
 
         /**
          * Recipient address
@@ -60,7 +69,7 @@ class TransferOperation private constructor(
         fun amount(amount: BigDecimal) = apply { this.amount = amount }
 
         /**
-         * Metadata stands for:
+         * (Optional) Metadata stands for:
          * - Transaction data in hex format
          * - Memo
          * - Destination tag
@@ -90,24 +99,24 @@ class TransferOperation private constructor(
 
         @Throws(IllegalArgumentException::class)
         fun build(): TransferOperation {
-            val assetId = this.assetId
+            val coin = this.coin
             val to = this.to
             val amount = this.amount
             val action = this.action
             val callback = this.callback
-            require(!assetId.isNullOrEmpty()) { IllegalArgumentException("'assetId' param required") }
+            require(coin != null) { IllegalArgumentException("'coin' param required") }
             require(!to.isNullOrEmpty()) { IllegalArgumentException("'to' param required") }
             require(amount != null) { IllegalArgumentException("'amount' param required") }
             require(action != null) { IllegalArgumentException("'action' param required") }
             require(callback != null) { IllegalArgumentException("'callback' param required") }
 
-            return TransferOperation(action, callback, assetId, to, amount, meta, feePrice, feeLimit, nonce)
+            return TransferOperation(action, callback, coin, tokenId, to, amount, meta, feePrice, feeLimit, nonce)
         }
     }
 
     override fun buildUri(): Uri {
         val uriBuilder = Uri.parse("trust://${Trust.Host.SDK_TRANSACTION.key}").buildUpon().apply {
-            appendQueryParameter("asset", assetId)
+            appendQueryParameter("asset", buildAssetId(coin, tokenId))
             appendQueryParameter("to", to)
             appendQueryParameter("amount", amount.toPlainString())
             appendQueryParameter("nonce", nonce.toString())
@@ -119,4 +128,5 @@ class TransferOperation private constructor(
         }
         return uriBuilder.build()
     }
+
 }

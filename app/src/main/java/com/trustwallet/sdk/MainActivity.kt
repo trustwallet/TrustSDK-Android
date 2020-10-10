@@ -25,45 +25,44 @@ class MainActivity : AppCompatActivity() {
             sdkGetAccountsCall = Trust.execute(this, GetAccountsRequest(Coin.ETHEREUM, Coin.WAVES, Coin.ALGORAND, Coin.ATOM, Coin.BINANCE, Coin.BITCOINCASH))
         }
         findViewById<Button>(R.id.send_transaction).setOnClickListener {
-            val operation = TransferOperation.Builder().apply {
-                action = ActionType.SEND
-                callback = Uri.parse("trust_sdk://tx_callback")
-                assetId = "c714"
-                to = "bnb1sh6nuztt3dcevy4ngmztkpapnvxqy7je0t0udr"
-                amount = BigDecimal("0.0001")
-                meta = "memo"
-            }.build()
+            val operation = TransferOperation.Builder()
+                .action(ActionType.SEND)
+                .callback(Uri.parse("app_scheme://tx_callback"))
+                .coin(714)
+                .to("bnb1sh6nuztt3dcevy4ngmztkpapnvxqy7je0t0udr")
+                .amount(BigDecimal("0.0001"))
+                .meta("memo")
+                .build()
             Trust.execute(this, operation)
         }
         findViewById<Button>(R.id.sign_transaction).setOnClickListener {
-            val operation = TransferOperation.Builder().apply {
-                action = ActionType.SIGN
-                callback = Uri.parse("trust_sdk://tx_callback")
-                assetId = "c60_t0x6B175474E89094C44Da98b954EedeAC495271d0F"
-                to = "0xF36f148D6FdEaCD6c765F8f59D4074109E311f0c"
-                amount = BigDecimal("1")
-                feeLimit = 21000L
-                feePrice = BigInteger("100000000000")
-                nonce = 2
-                meta = "0xa9059cbb0000000000000000000000000F36f148D6FdEaCD6c765F8f59D4074109E311f0c0000000000000000000000000000000000000000000000000000000000000001"
-            }.build()
+            val operation = TransferOperation.Builder()
+                .action(ActionType.SIGN)
+                .callback(Uri.parse("app_scheme://tx_callback"))
+                .coin(60)
+                .tokenId("0x6B175474E89094C44Da98b954EedeAC495271d0F")
+                .to("0xF36f148D6FdEaCD6c765F8f59D4074109E311f0c")
+                .amount(BigDecimal("1"))
+                .feeLimit(21000L)
+                .feePrice(BigInteger("100000000000"))
+                .nonce(2)
+                .meta("0xa9059cbb0000000000000000000000000F36f148D6FdEaCD6c765F8f59D4074109E311f0c0000000000000000000000000000000000000000000000000000000000000001")
+                .build()
             Trust.execute(this, operation)
         }
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        val txCallback = Trust.handleTransactionResult(intent)
-        if (!txCallback?.hash.isNullOrEmpty()) {
-            resultText.text = txCallback?.hash
-            Log.d("TRANSACTION_HASH", txCallback?.hash)
-        } else if (!txCallback?.signature.isNullOrEmpty()) {
-            resultText.text = txCallback?.signature
-            Log.d("TRANSACTION_SIGNATURE", txCallback?.signature)
-        } else if (txCallback?.isCancelled == true) {
-            resultText.text = "Cancelled"
-            Log.d("TRANSACTION_CANCEL", "Cancelled")
+        val txCallback = Trust.handleTransferResult(intent)
+        val result = when {
+            !txCallback?.hash.isNullOrEmpty() -> txCallback?.hash
+            !txCallback?.signature.isNullOrEmpty() -> txCallback?.signature
+            txCallback?.isCancelled == true -> "Cancelled"
+            else -> throw IllegalStateException()
         }
+        resultText.text = result
+        Log.d("CALLBACK_RESULT", result)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

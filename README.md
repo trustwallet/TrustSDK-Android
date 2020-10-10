@@ -58,7 +58,7 @@ Add deep link intent filter to your `AndroidManifest.xml`:
     <intent-filter android:autoVerify="true">
     ...
         <action android:name="android.intent.action.VIEW" />
-        <data android:scheme="trust_sdk" android:host="tx_callback" />
+        <data android:scheme="app_scheme" android:host="tx_callback" />
 ```
 
 Override 'onNewIntent' if your activity is singleTask or 'onCreate' if not, and handle sdk request callback:
@@ -87,19 +87,18 @@ getAccountsCall = Trust.execute(this, AccountsRequest(Coin.ETHEREUM, Coin.WAVES,
 To sign or send a transaction use this code:
 
 ```kotlin
-val operation = TransferOperation.Builder().apply {
-      // Required params
-      action = ActionType.SIGN // ActionType.SEND
-      callback = Uri.parse("app_scheme://tx_callback")
-      assetId = "c60_t0x6B175474E89094C44Da98b954EedeAC495271d0F"
-      to = "0xF36f148D6FdEaCD6c765F8f59D4074109E311f0c"
-      amount = BigDecimal("1")
-      // Optional params
-      feeLimit = 21000L
-      feePrice = BigInteger("100000000000")
-      nonce = 2
-      meta = "0xa9059cbb0000000000000000000000000F36f148D6FdEaCD6c765F8f59D4074109E311f0c0000000000000000000000000000000000000000000000000000000000000001"
-}.build()
+val operation = TransferOperation.Builder()
+    .action(ActionType.SIGN) // ActionType - Send or Sign transaction request
+    .callback(Uri.parse("app_scheme://tx_callback")) // callback deep link Uri to app initialized request.
+    .coin(60) // Slip44 index
+    .tokenId("0x6B175474E89094C44Da98b954EedeAC495271d0F") // token (optional), following standard of unique identifier on the blockhain as smart contract address or asset ID
+    .to("0xF36f148D6FdEaCD6c765F8f59D4074109E311f0c") // Recipient address
+    .amount(BigDecimal("1")) // Transaction amount in human-readable (unit) format
+    .feeLimit(21000L) // (Optional) You can set your custom fee limit in subunit format
+    .feePrice(BigInteger("100000000000")) // (Optional) You can set your custom fee price in subunit format
+    .nonce(2) // (Optional) You can set your custom nonce or sequence
+    .meta("0xa9059cbb0000000000000000000000000F36f148D6FdEaCD6c765F8f59D4074109E311f0c0000000000000000000000000000000000000000000000000000000000000001") // (Optional) Transaction data in hex format, Memo or Destination tag
+    .build()
 Trust.execute(this, operation)
 ```
 
