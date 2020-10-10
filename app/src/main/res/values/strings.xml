@@ -2,4 +2,6 @@
     <string name="app_name">TrustSdk</string>
     <string name="get_accounts">Get Accounts</string>
     <string name="get_accounts_deprecated">Get Accounts (Deprecated)</string>
+    <string name="send_transaction">Send Transaction</string>
+    <string name="sign_transaction">Sign Transaction</string>
 </resources>
