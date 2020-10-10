@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
             else -> throw IllegalStateException()
         }
         resultText.text = result
-        Log.d("CALLBACK_RESULT", result)
+        Log.d("CALLBACK_RESULT", result!!)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
