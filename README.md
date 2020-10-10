@@ -65,7 +65,7 @@ Override 'onNewIntent' if your activity is singleTask or 'onCreate' if not, and 
 ```kotlin
 override fun onNewIntent(intent: Intent?) {
     super.onNewIntent(intent)
-    val txCallback = Trust.handleTransactionResult(intent)
+    val txCallback = Trust.handleTransferResult(intent)
     txCallback?.signature   // Signed transaction in hex format if you requested sign
     txCallback?.hash        // Hash id of transferred transaction
     txCallback?.isCancelled // User has cancelled your transaction request
