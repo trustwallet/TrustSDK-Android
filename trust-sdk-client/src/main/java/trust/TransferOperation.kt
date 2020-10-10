@@ -116,6 +116,7 @@ class TransferOperation private constructor(
 
     override fun buildUri(): Uri {
         val uriBuilder = Uri.parse("trust://${Trust.Host.SDK_TRANSACTION.key}").buildUpon().apply {
+            appendQueryParameter("action", Trust.Action.TRANSFER.key)
             appendQueryParameter("asset", buildAssetId(coin, tokenId))
             appendQueryParameter("to", to)
             appendQueryParameter("amount", amount.toPlainString())
