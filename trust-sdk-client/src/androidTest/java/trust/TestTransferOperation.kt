@@ -44,6 +44,20 @@ class TestTransferOperation {
     }
 
     @Test
+    fun testTransferFromOperation() {
+        val operation = TransferOperation.Builder()
+                .action(ActionType.SEND)
+                .callback(Uri.parse("app_scheme://tx_callback"))
+                .coin(195)
+                .to("TWLUfM2y4wW1HZqrRKfz2cksF7sEbYfSj4")
+                .from("TKAiGtx6Da2ZJskZQV5RDEkgs9Sd2jJDDC")
+                .amount(BigDecimal("1"))
+                .build()
+
+        assertEquals("trust://sdk_transaction?action=transfer&asset=c195&to=TWLUfM2y4wW1HZqrRKfz2cksF7sEbYfSj4&amount=1&nonce=-1&callback=app_scheme%3A%2F%2Ftx_callback&confirm_type=send&from=TKAiGtx6Da2ZJskZQV5RDEkgs9Sd2jJDDC", operation.buildUri().toString())
+    }
+
+    @Test
     fun testTransferOperationActionRequired() {
         try {
             TransferOperation.Builder()

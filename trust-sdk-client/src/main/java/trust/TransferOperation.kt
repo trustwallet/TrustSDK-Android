@@ -9,6 +9,7 @@ class TransferOperation private constructor(
         val callback: Uri,
         val coin: Int,
         val tokenId: String?,
+        val from: String?,
         val to: String,
         val amount: BigDecimal,
         val meta: String?,
@@ -22,6 +23,7 @@ class TransferOperation private constructor(
             var callback: Uri? = null,
             var coin: Int? = null,
             var tokenId: String? = null,
+            var from: String? = null,
             var to: String? = null,
             var amount: BigDecimal? = null,
             var meta: String? = null,
@@ -55,6 +57,13 @@ class TransferOperation private constructor(
          * (Optional) token, following standard of unique identifier on the blockhain as smart contract address or asset ID
          */
         fun tokenId(tokenId: String) = apply { this.tokenId = tokenId }
+
+        /**
+         * (Optional) "From" address parameter specifies a wallet which contains given account
+         *
+         * If you leave it null - current wallet will be used for signing
+         */
+        fun from(from: String) = apply { this.from = from }
 
         /**
          * Recipient address
@@ -110,7 +119,7 @@ class TransferOperation private constructor(
             require(action != null) { IllegalArgumentException("'action' param required") }
             require(callback != null) { IllegalArgumentException("'callback' param required") }
 
-            return TransferOperation(action, callback, coin, tokenId, to, amount, meta, feePrice, feeLimit, nonce)
+            return TransferOperation(action, callback, coin, tokenId, from, to, amount, meta, feePrice, feeLimit, nonce)
         }
     }
 
@@ -123,6 +132,7 @@ class TransferOperation private constructor(
             appendQueryParameter("nonce", nonce.toString())
             appendQueryParameter("callback", callback.toString())
             appendQueryParameter("confirm_type", action.key)
+            from?.let { appendQueryParameter("from", it) }
             meta?.let { appendQueryParameter("meta", it) }
             feePrice?.let { appendQueryParameter("fee_price", it.toString()) }
             feeLimit?.let { appendQueryParameter("fee_limit", it.toString()) }
