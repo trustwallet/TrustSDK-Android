@@ -140,7 +140,7 @@ class TestTransferOperation {
         val result = Trust.handleTransferResult(intent)
 
         assertEquals("0xF36f148D6FdEaCD6c765F8f59D4074109E311f0c", result!!.hash)
-        assertFalse(result.isCancelled)
+        assertNull(result.error)
         assertNull(result.signature)
     }
 
@@ -152,7 +152,7 @@ class TestTransferOperation {
         val result = Trust.handleTransferResult(intent)
 
         assertEquals("0xF36f148D6FdEaCD6c765F8f59D4074109E311f0c", result!!.signature)
-        assertFalse(result.isCancelled)
+        assertNull(result.error)
         assertNull(result.hash)
     }
 
@@ -163,7 +163,31 @@ class TestTransferOperation {
 
         val result = Trust.handleTransferResult(intent)
 
-        assertTrue(result!!.isCancelled)
+        assertEquals(OperationError.CANCEL, result!!.error)
+        assertNull(result.hash)
+        assertNull(result.signature)
+    }
+
+    @Test
+    fun testHandleTransferUnknownErrorResult() {
+        val intent = Intent()
+        intent.data = Uri.parse("app_scheme://tx_callback?action=transfer&cancel=noclue")
+
+        val result = Trust.handleTransferResult(intent)
+
+        assertEquals(OperationError.UNKNOWN, result!!.error)
+        assertNull(result.hash)
+        assertNull(result.signature)
+    }
+
+    @Test
+    fun testHandleTransferAccountErrorResult() {
+        val intent = Intent()
+        intent.data = Uri.parse("app_scheme://tx_callback?action=transfer&cancel=wrong_account")
+
+        val result = Trust.handleTransferResult(intent)
+
+        assertEquals(OperationError.WRONG_ACCOUNT, result!!.error)
         assertNull(result.hash)
         assertNull(result.signature)
     }

@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         val result = when {
             !txCallback?.hash.isNullOrEmpty() -> txCallback?.hash
             !txCallback?.signature.isNullOrEmpty() -> txCallback?.signature
-            txCallback?.isCancelled == true -> "Cancelled"
+            txCallback?.error != null -> txCallback.error?.name
             else -> throw IllegalStateException()
         }
         resultText.text = result

@@ -68,7 +68,7 @@ override fun onNewIntent(intent: Intent?) {
     val txCallback = Trust.handleTransferResult(intent)
     txCallback?.signature   // Signed transaction in hex format if you requested sign
     txCallback?.hash        // Hash id of transferred transaction
-    txCallback?.isCancelled // User has cancelled your transaction request
+    txCallback?.error       // null | wrong_account | cancel | unknown
 }
 ```
 
