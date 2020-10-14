@@ -92,8 +92,8 @@ val operation = TransferOperation.Builder()
     .callback(Uri.parse("app_scheme://tx_callback")) // callback deep link Uri to app initialized request.
     .coin(60) // Slip44 index
     .tokenId("0x6B175474E89094C44Da98b954EedeAC495271d0F") // token (optional), following standard of unique identifier on the blockhain as smart contract address or asset ID
-    .from("0xF36f148D6FdEaCD6c765F8f59D4074109E311f0c") // Recipient address
-    .to("0x1b38BC1D3a7B2a370425f70CedaCa8119ac24576") // (Optional) "From" address parameter specifies a wallet which contains given account
+    .from("0xF36f148D6FdEaCD6c765F8f59D4074109E311f0c") // (Optional) "From" address parameter specifies a wallet which contains given account
+    .to("0x1b38BC1D3a7B2a370425f70CedaCa8119ac24576") // Recipient address
     .amount(BigDecimal("1")) // Transaction amount in human-readable (unit) format
     .feeLimit(21000L) // (Optional) You can set your custom fee limit in subunit format
     .feePrice(BigInteger("100000000000")) // (Optional) You can set your custom fee price in subunit format
