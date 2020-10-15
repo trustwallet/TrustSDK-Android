@@ -46,12 +46,10 @@ object Trust {
         val signature = intent.data?.getQueryParameter(ExtraKey.TRANSACTION_SIGN.key)
         val hash = intent.data?.getQueryParameter(ExtraKey.TRANSACTION_HASH.key)
         val error = intent.data?.getQueryParameter(ExtraKey.CANCEL.key)
+        val operationError = if (error.isNullOrEmpty()) null else OperationError.safeValueOf(error)
         when {
             intentAction != action.key -> null
-            signature != null -> TransactionResult(signature = signature)
-            hash != null -> TransactionResult(hash = hash)
-            error != null -> TransactionResult(isCancelled = true)
-            else -> null
+            else -> TransactionResult(hash, signature, operationError)
         }
     } else {
         null
