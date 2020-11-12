@@ -35,24 +35,27 @@ object Trust {
         }
     }
 
-    fun handleTransferResult(intent: Intent?): TransactionResult? = handleOperationResult(Action.TRANSFER, intent)
+    fun handleOperationResult(intent: Intent?): OperationResult? = when (intent?.data?.getQueryParameter(ExtraKey.ACTION.key)) {
+        Action.TRANSFER.key,
+        Action.TRADE.key,
+        Action.DELEGATE.key,
+        Action.GET_ACCOUNTS.key -> buildOperationResult(intent)
+        else -> null
+    }
 
-    fun handleTradeResult(intent: Intent?): TransactionResult? = handleOperationResult(Action.TRADE, intent)
-
-    fun handleDelegateResult(intent: Intent?): TransactionResult? = handleOperationResult(Action.DELEGATE, intent)
-
-    private fun handleOperationResult(action: Action, intent: Intent?)  = if (intent?.data?.host == Host.TX_CALLBACK.key) {
-        val intentAction = intent.data?.getQueryParameter(ExtraKey.ACTION.key)
-        val signature = intent.data?.getQueryParameter(ExtraKey.TRANSACTION_SIGN.key)
-        val hash = intent.data?.getQueryParameter(ExtraKey.TRANSACTION_HASH.key)
-        val error = intent.data?.getQueryParameter(ExtraKey.CANCEL.key)
+    private fun buildOperationResult(intent: Intent?): OperationResult? {
+        val signature = intent?.data?.getQueryParameter(ExtraKey.TRANSACTION_SIGN.key)
+        val hash = intent?.data?.getQueryParameter(ExtraKey.TRANSACTION_HASH.key)
+        val data = intent?.data?.getQueryParameter(ExtraKey.DATA.key)
+        val error = intent?.data?.getQueryParameter(ExtraKey.CANCEL.key)
+        val id = intent?.data?.getQueryParameter(ExtraKey.ID.key)
         val operationError = if (error.isNullOrEmpty()) null else OperationError.safeValueOf(error)
-        when {
-            intentAction != action.key -> null
-            else -> TransactionResult(hash, signature, operationError)
-        }
-    } else {
-        null
+
+        return OperationResult(
+            data = data ?: hash ?: signature,
+            error = operationError,
+            id = id?.toIntOrNull()
+        )
     }
 
     private fun openMarket(activity: Activity) {
@@ -78,19 +81,22 @@ object Trust {
            ADDRESSES("addresses"),
            TRANSACTION_HASH("transaction_hash"),
            TRANSACTION_SIGN("transaction_sign"),
+           DATA("data"),
            CANCEL("cancel"),
            ACTION("action"),
+           ID("id"),
     }
 
     internal enum class Action(val key: String) {
         TRANSFER("transfer"),
         TRADE("trade"),
         DELEGATE("delegate"),
+        GET_ACCOUNTS("get_accounts"),
     }
 
     internal enum class Host(val key: String) {
         SDK_GET_ACCOUNTS("sdk_get_accounts"),
-        GET_ACCOUNTS("get_accounts"),
+        ACCOUNTS_CALLBACK("accounts_callback"),
         TX_CALLBACK("tx_callback"),
         SDK_TRANSACTION("sdk_transaction"),
     }
