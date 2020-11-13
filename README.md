@@ -31,26 +31,6 @@ dependencies {
 
 ## Handle Trust callbacks
 
-### Deprecated method used now only for *get accounts* request:
-
-Override `onActivityResult` to obtain the signing result. Handle the response data and pass onSuccessListener and onFailureListener.
-
-```kotlin
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        getAccountsCall?.let {
-                    it.onActivityResult(requestCode, resultCode, data, OnCompleteListener<Array<Account>> { response ->
-                        val result = response.result?.map { account ->  "${account.address.data} ${account.coin.name}" }?.joinToString("\n")
-                        resultText.text = result
-                        Log.d("GET_ACCOUNTS", result ?: "")
-                    })
-                }
-    }
-```
-
-### For all other requests
-
 Add deep link intent filter to your `AndroidManifest.xml`:
 ```xml
 <activity
@@ -59,16 +39,20 @@ Add deep link intent filter to your `AndroidManifest.xml`:
     ...
         <action android:name="android.intent.action.VIEW" />
         <data android:scheme="app_scheme" android:host="tx_callback" />
+        <data android:scheme="app_scheme" android:host="accounts_callback" />
 ```
 
 Override 'onNewIntent' if your activity is singleTask or 'onCreate' if not, and handle sdk request callback:
 ```kotlin
 override fun onNewIntent(intent: Intent?) {
     super.onNewIntent(intent)
-    val txCallback = Trust.handleTransferResult(intent)
-    txCallback?.signature   // Signed transaction in hex format if you requested sign
-    txCallback?.hash        // Hash id of transferred transaction
-    txCallback?.error       // null | wrong_account | cancel | unknown
+    val txCallback = Trust.handleOperationResult(intent)
+    if (txCallback?.error != null) {
+        resultText.text = txCallback.error?.name
+    } else if (!txCallback?.data.isNullOrEmpty()) {
+        onResultData(txCallback?.data)
+    }
+    val accounts = (operation as? AccountsOperation)?.parseResultData(txCallback?.data ?: return)
 }
 ```
 
@@ -79,8 +63,16 @@ override fun onNewIntent(intent: Intent?) {
 To get accounts use this code:
 
 ```kotlin
-getAccountsCall = Trust.execute(this, AccountsRequest(Coin.ETHEREUM, Coin.WAVES, Coin.ALGORAND, Coin.ATOM, Coin.BINANCE, Coin.BITCOINCASH))
+operation = AccountsOperation.Builder()
+    .callbackScheme("app_scheme") // callback deep link scheme to app initialized request.
+    .callbackHost("accounts_callback") // (Optional) callback deep link host to app initialized request. 'tx_callback' by default
+    .coins(Coin.ETHEREUM, Coin.WAVES, Coin.ALGORAND, Coin.ATOM, Coin.BINANCE, Coin.BITCOINCASH) // coins you want to request
+    .requestId(0) // (Optional) Request id will be returned as callback param. Any incrementing integer. 1 by default
+    .build()
+Trust.execute(this, operation)
 ```
+
+You can find more documentation in [AccountsOperation](https://github.com/trustwallet/TrustSDK-Android/blob/master/trust-sdk-client/src/main/java/trust/AccountsOperation.kt)
 
 ### Sign a transaction
 
@@ -89,7 +81,8 @@ To sign or send a transaction use this code:
 ```kotlin
 val operation = TransferOperation.Builder()
     .action(ActionType.SIGN) // ActionType - Send or Sign transaction request
-    .callback(Uri.parse("app_scheme://tx_callback")) // callback deep link Uri to app initialized request.
+    .callbackScheme("app_scheme") // callback deep link scheme to app initialized request.
+    .callbackHost("tx_callback") // (Optional) callback deep link host to app initialized request. 'tx_callback' by default
     .coin(60) // Slip44 index
     .tokenId("0x6B175474E89094C44Da98b954EedeAC495271d0F") // token (optional), following standard of unique identifier on the blockhain as smart contract address or asset ID
     .from("0xF36f148D6FdEaCD6c765F8f59D4074109E311f0c") // (Optional) "From" address parameter specifies a wallet which contains given account
@@ -99,6 +92,7 @@ val operation = TransferOperation.Builder()
     .feePrice(BigInteger("100000000000")) // (Optional) You can set your custom fee price in subunit format
     .nonce(2) // (Optional) You can set your custom nonce or sequence
     .meta("0xa9059cbb0000000000000000000000000F36f148D6FdEaCD6c765F8f59D4074109E311f0c0000000000000000000000000000000000000000000000000000000000000001") // (Optional) Transaction data in hex format, Memo or Destination tag
+    .requestId(0) // (Optional) Request id will be returned as callback param. Any incrementing integer. 1 by default
     .build()
 Trust.execute(this, operation)
 ```
