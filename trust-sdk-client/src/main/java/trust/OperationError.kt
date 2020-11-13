@@ -9,9 +9,9 @@ enum class OperationError {
 
     companion object {
         fun safeValueOf(key: String) = try {
-            OperationError.valueOf(key.toUpperCase(Locale.ROOT))
+            valueOf(key.toUpperCase(Locale.ROOT))
         } catch (t: Throwable) {
-            OperationError.UNKNOWN
+            UNKNOWN
         }
     }
 }

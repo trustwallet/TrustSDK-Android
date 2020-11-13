@@ -6,7 +6,8 @@ import java.math.BigInteger
 
 class TransferOperation private constructor(
         val action: ActionType,
-        val callback: Uri,
+        val scheme: String,
+        val host: String,
         val coin: Int,
         val tokenId: String?,
         val from: String?,
@@ -15,12 +16,14 @@ class TransferOperation private constructor(
         val meta: String?,
         val feePrice: BigInteger?,
         val feeLimit: Long?,
-        val nonce: Long
+        val nonce: Long,
+        val id: Int
 ): Operation {
 
     data class Builder(
             var action: ActionType? = null,
-            var callback: Uri? = null,
+            var scheme: String? = null,
+            var host: String = Trust.Host.TX_CALLBACK.key,
             var coin: Int? = null,
             var tokenId: String? = null,
             var from: String? = null,
@@ -29,7 +32,8 @@ class TransferOperation private constructor(
             var meta: String? = null,
             var feePrice: BigInteger? = null,
             var feeLimit: Long? = null,
-            var nonce: Long = -1
+            var nonce: Long = -1,
+            var id: Int = 1
     ) {
 
         /**
@@ -38,11 +42,18 @@ class TransferOperation private constructor(
         fun action(action: ActionType) = apply { this.action = action }
 
         /**
-         * callback deep link Uri to app initialized request.
+         * callback deep link Uri scheme to app initialized request.
          *
          * Implement deep link handling to get transaction result
          */
-        fun callback(callback: Uri) = apply { this.callback = callback }
+        fun callbackScheme(scheme: String) = apply { this.scheme = scheme }
+
+        /**
+         * callback deep link Uri host to app initialized request.
+         *
+         * 'tx_callback' by default
+         */
+        fun callbackHost(host: String) = apply { this.host = host }
 
         /**
          * Slip44 index
@@ -106,20 +117,40 @@ class TransferOperation private constructor(
          */
         fun nonce(nonce: Long) = apply { this.nonce = nonce }
 
+        /**
+         * (Optional) Any incrementing integer
+         */
+        fun requestId(id: Int) = apply { this.id = id }
+
         @Throws(IllegalArgumentException::class)
         fun build(): TransferOperation {
             val coin = this.coin
             val to = this.to
             val amount = this.amount
             val action = this.action
-            val callback = this.callback
+            val scheme = this.scheme
+            val host = this.host
             require(coin != null) { IllegalArgumentException("'coin' param required") }
             require(!to.isNullOrEmpty()) { IllegalArgumentException("'to' param required") }
             require(amount != null) { IllegalArgumentException("'amount' param required") }
             require(action != null) { IllegalArgumentException("'action' param required") }
-            require(callback != null) { IllegalArgumentException("'callback' param required") }
+            require(scheme != null) { IllegalArgumentException("'scheme' param required") }
 
-            return TransferOperation(action, callback, coin, tokenId, from, to, amount, meta, feePrice, feeLimit, nonce)
+            return TransferOperation(
+                    action = action,
+                    scheme = scheme,
+                    host = host,
+                    coin = coin,
+                    tokenId = tokenId,
+                    from = from,
+                    to = to,
+                    amount = amount,
+                    meta = meta,
+                    feePrice = feePrice,
+                    feeLimit = feeLimit,
+                    nonce = nonce,
+                    id = id
+            )
         }
     }
 
@@ -130,8 +161,10 @@ class TransferOperation private constructor(
             appendQueryParameter("to", to)
             appendQueryParameter("amount", amount.toPlainString())
             appendQueryParameter("nonce", nonce.toString())
-            appendQueryParameter("callback", callback.toString())
+            appendQueryParameter("app", scheme)
+            appendQueryParameter("callback", host)
             appendQueryParameter("confirm_type", action.key)
+            appendQueryParameter("id", id.toString())
             from?.let { appendQueryParameter("from", it) }
             meta?.let { appendQueryParameter("meta", it) }
             feePrice?.let { appendQueryParameter("fee_price", it.toString()) }
