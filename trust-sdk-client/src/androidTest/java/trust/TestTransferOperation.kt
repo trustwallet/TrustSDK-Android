@@ -14,6 +14,7 @@ class TestTransferOperation {
         val operation = TransferOperation.Builder()
                 .action(ActionType.SIGN)
                 .callbackScheme("app_scheme")
+                .callbackHost("callback")
                 .coin(60)
                 .tokenId("0x6B175474E89094C44Da98b954EedeAC495271d0F")
                 .to("0xF36f148D6FdEaCD6c765F8f59D4074109E311f0c")
@@ -22,9 +23,10 @@ class TestTransferOperation {
                 .feePrice(BigInteger("100000000000"))
                 .nonce(2)
                 .meta("0xa9059cbb0000000000000000000000000F36f148D6FdEaCD6c765F8f59D4074109E311f0c0000000000000000000000000000000000000000000000000000000000000001")
+                .requestId(0)
                 .build()
 
-        assertEquals("trust://sdk_transaction?action=transfer&asset=c60_t0x6B175474E89094C44Da98b954EedeAC495271d0F&to=0xF36f148D6FdEaCD6c765F8f59D4074109E311f0c&amount=1&nonce=2&app=app_scheme&callback=tx_callback&confirm_type=sign&id=1&meta=0xa9059cbb0000000000000000000000000F36f148D6FdEaCD6c765F8f59D4074109E311f0c0000000000000000000000000000000000000000000000000000000000000001&fee_price=100000000000&fee_limit=21000", operation.buildUri().toString())
+        assertEquals("trust://sdk_transaction?action=transfer&asset=c60_t0x6B175474E89094C44Da98b954EedeAC495271d0F&to=0xF36f148D6FdEaCD6c765F8f59D4074109E311f0c&amount=1&nonce=2&app=app_scheme&callback=callback&confirm_type=sign&id=0&meta=0xa9059cbb0000000000000000000000000F36f148D6FdEaCD6c765F8f59D4074109E311f0c0000000000000000000000000000000000000000000000000000000000000001&fee_price=100000000000&fee_limit=21000", operation.buildUri().toString())
 
         assertEquals("c60", operation.buildAssetId(60))
         assertEquals("c60_t0x6B175474E89094C44Da98b954EedeAC495271d0F", operation.buildAssetId(60, "0x6B175474E89094C44Da98b954EedeAC495271d0F"))
