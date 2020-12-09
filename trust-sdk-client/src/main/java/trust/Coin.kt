@@ -48,4 +48,9 @@ enum class Coin(val index: Int) {
     HARMONY(1023),
     NEAR(397),
     SOLANA(501),
+    ELROND(508),
+    POLKADOT(354),
+    SMARTCHAIN(20000714),
+    SMARTCHAINLEGACY(10000714),
+    FILECOIN(461),
 }
