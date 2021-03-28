@@ -17,10 +17,11 @@ object Trust {
     fun <R, T : Request<R>> execute(activity: Activity, request: T): Call<R, T>? {
         val intent = Intent()
         intent.data = request.data()
-        return if (canStartActivity(activity, intent)) {
+        return try {
+            intent.action = Intent.ACTION_VIEW
             activity.startActivityForResult(intent, request.getRequestCode())
             Call(request)
-        } else {
+        } catch (err: Throwable) {
             openMarket(activity)
             null
         }
@@ -28,9 +29,9 @@ object Trust {
 
     fun execute(activity: Activity, operation: Operation) {
         val intent = Intent(Intent.ACTION_VIEW, operation.buildUri())
-        if (canStartActivity(activity, intent)) {
+        try {
             activity.startActivity(intent)
-        } else {
+        } catch (err: Throwable) {
             openMarket(activity)
         }
     }
