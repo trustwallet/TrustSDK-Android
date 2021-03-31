@@ -1,1 +1,1 @@
-include ':app', ':trust-sdk-client', ':trust-sdk-wallet', ':walletapp'
+include ':app', ':trust-sdk-client'

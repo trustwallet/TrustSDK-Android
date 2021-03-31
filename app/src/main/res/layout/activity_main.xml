@@ -6,21 +6,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+    <TextView
+        android:id="@+id/result_out"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        />
+    <Button
+        android:id="@+id/sdk_get_accounts"
+        android:text="@string/get_accounts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    <Button
+        android:id="@+id/send_transaction"
+        android:text="@string/send_transaction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
     <Button
         android:id="@+id/sign_transaction"
         android:text="@string/sign_transaction"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
-    <Button
-        android:id="@+id/sign_message"
-        android:text="@string/sign_message"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
-    <Button
-        android:id="@+id/sign_personal_message"
-        android:text="@string/sign_personal_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />

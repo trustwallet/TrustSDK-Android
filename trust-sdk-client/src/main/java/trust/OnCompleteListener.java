@@ -1,5 +1,5 @@
 package trust;
 
-public interface OnCompleteListener<T extends Request> {
-    void onComplete(Response<T> response);
+public interface OnCompleteListener<R> {
+    void onComplete(Response<R> response);
 }
